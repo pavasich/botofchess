@@ -1,0 +1,16 @@
+{
+  "name": "twitchbot",
+  "version": "1.0.0",
+  "description": "birdofchess twitch bot",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "pavasich",
+  "license": "ISC",
+  "repository": "https://github.com/pavasich/twitchbot",
+  "dependencies": {
+    "node-twitchbot": "^1.2.2",
+    "tmi.js": "^1.1.2"
+  }
+}
