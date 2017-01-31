@@ -1,6 +1,5 @@
 const START_TIME = new Date();
-import { secrets } from './.secrets';
-const { password } = secrets;
+const { password } = require('./.secrets');
 
 const OPTIONS = {
   options: {
