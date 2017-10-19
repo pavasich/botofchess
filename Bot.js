@@ -68,15 +68,7 @@ const PAINT_TIME = [
 ];
 
 let paintTime = _.shuffle(PAINT_TIME.slice());
-let tricksters = {
-  a: 1,
-  b: 2,
-  c: 3,
-  d: 4,
-  e: 5,
-  f: 3,
-  g: 2,
-};
+let tricksters = {};
 
 const getWinner = (visitors) => {
   const keys = _.keys(visitors);
@@ -118,10 +110,6 @@ const getWinner = (visitors) => {
     }
   }
 }
-
-console.log(getWinner({
-  b: 1, e: 1, x: 1,
-}))
 
 //  S P O O P T O W N
 let visitors = false;
