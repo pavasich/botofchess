@@ -58,28 +58,16 @@ const TRICKS = [
     },
     {
         p: NORMAL,
-        effect: 'Rook sings a line from '
+        effect: 'Rook sings a line from a song of your choice!'
     },
     {
         p: RARE,
         effect: 'Rook will draw you a character of your choice.',
     },
-    // {
-    //     p: NORMAL,
-    //     effect: 'Bebop (@serbosaurus) will draw you a character of your choice in MSPaint',
-    // },
-    // {
-    //     p: NORMAL,
-    //     effect: '@StolenVirginsWings will draw you a character of your choice in MSPaint',
-    // },
-    // {
-    //     p: NORMAL,
-    //     effect: '@Amateur_Professional will draw you a character of your choice in MSPaint',
-    // },
-    // {
-    //     p: NORMAL,
-    //     effect: '@gravetch will draw you a character of your choice in MSPaint',
-    // },
+    {
+        p: NORMAL,
+        effect: 'PAINT TIME',
+    },
     {
         p: RARE,
         effect: 'BLIND. ROOK HAS TO PUT ON A BLINDFOLD FOR 1 MINUTE',
@@ -114,7 +102,7 @@ const TRICKS = [
     },
     {
         p: NORMAL,
-        effect: 'Overwatch! Rook or another player of your choice must switch to another character of your choice right now.',
+        effect: 'Overwatch! Choose a character for Rook or another player of your choice to switch to right now.',
     },
     {
         p: NORMAL,
