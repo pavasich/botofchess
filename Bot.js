@@ -418,7 +418,7 @@ const commands = (channel, userstate, message, self) => {
             path: 'group/user/birdofchess/chatters',
             callback: ({ chatters: { moderators, viewers } }) => {
               if (moderators.includes(name2) || viewers.includes(name2)) {
-                bot.action(channel, `@${name1} hugs @${target}   :3`);
+                bot.action(channel, `@${name1} hugs @${name2}   :3`);
                 return;
               }
 
