@@ -97,11 +97,11 @@ const TRICKS = [
         effect: '50/50: Cute Animals/Screaming',
     },
     {
-        p: NORMAL,
+        p: 0,
         effect: 'Overwatch! Rook, or some willing sacrifice that is not @madmanmax, must voice-act their character this round.',
     },
     {
-        p: NORMAL,
+        p: 0,
         effect: 'Overwatch! Choose a character for Rook or another player of your choice to switch to right now.',
     },
     {
