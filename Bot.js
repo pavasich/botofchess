@@ -9,13 +9,11 @@ const data = require('./data.json');
 const debounce = require('./debounce');
 const emotes = require('./emotes');
 const GLOBALS = require('./globals');
-const treatLink = 'https://docs.google.com/document/d/1AA3H6z1y1ERKxdnyq-ctZRR4jAy2tmMdkdt_ShfVGzk/edit?usp=sharing';
 let quotes = require('./quotes.json');
 
 const datapath = path.resolve(__dirname, './data.json');
 const topics = require('./topics.js');
 
-const getTrick = require('./tricks.js');
 
 /**
  *   G L O B A L S
@@ -27,10 +25,6 @@ const channel = OPTIONS.channels[0];
 
 let { shames, suggestions } = data;
 
-const requestsByUser = {};
-const requestsByGame = {};
-
-const TRICK_TIMEOUT = 1000 * 60 * 10;
 
 /**
  *   S E T U P
@@ -57,94 +51,6 @@ bot.on('connected', function(address, port) {
   say('I\'m alive!!');
   setInterval(save, 300000);
 });
-
-
-const PAINT_TIME = [
-  'Bebop (@serbosaurus) will draw you a character of your choice in MSPaint',
-  '@StolenVirginsWings will draw you a character of your choice in MSPaint',
-  '@Amateur_Professional will draw you a character of your choice in MSPaint',
-  '@gravetch will draw you a character of your choice in MSPaint',
-  '@neonphara will draw you a character of your choice in MSPaint',
-];
-
-let paintTime = _.shuffle(PAINT_TIME.slice());
-let tricksters = {};
-
-const getWinner = (visitors) => {
-  const keys = _.keys(visitors);
-  const o = _.cloneDeep(visitors);
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i];
-    if (!_.has(tricksters, k)) {
-      tricksters[k] = 1;
-    }
-    o[k] = tricksters[k];
-  }
-
-  const n = keys.length;
-  let sigma = 0;
-
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i];
-    const t = 1 / o[k];
-    o[k] = t;
-    sigma += t;
-  }
-
-  sigma = 1 / sigma;
-
-  for (let i = 0; i < keys.length; i++) {
-    const k = keys[i];
-    o[k] *= sigma;
-  }
-
-  let p = Math.random();
-  let sum = 0;
-  let final = _.shuffle(keys);
-  for (let i = 0; i < n; i++) {
-    const k = final[i];
-    sum += o[k];
-    if (sum > p) {
-      tricksters[k] += 1;
-      return k;
-    }
-  }
-}
-
-//  S P O O P T O W N
-let visitors = false;
-const trickOrTrick = () => {
-  visitors = {};
-  dangerSay('Trick or treat! Who\'s at the door?');
-  setTimeout(() => {
-    visitors = Object.keys(visitors);
-    if (visitors.length === 0) {
-      dangerSay('Huh. No one\'s here.');
-    } else {
-      const winner = getWinner(visitors);
-
-      dangerSay(`Ah, ${winner}!`);
-      setTimeout(() => {
-        let trick = getTrick();
-        if (trick === 'PAINT TIME') {
-          trick = paintTime.pop();
-          if (!paintTime.length) {
-            paintTime = _.shuffle(PAINT_TIME.slice());
-          }
-        }
-
-        dangerSay(trick);
-      }, 2000);
-    }
-    visitors = false;
-  }, 1000 * 45);
-  setTimeout(() => {
-    dangerSay('Time is almost up! Type a message in chat to be eligible for a trick!');
-  }, 1000 * 30);
-};
-
-setInterval(trickOrTrick, TRICK_TIMEOUT);
-
 
 /**
  *   F U N C T I O N S
@@ -282,10 +188,6 @@ const vote = () => {
 
 const commands = (channel, userstate, message, self) => {
   if (self) return;
-
-  if (visitors) {
-    visitors[userstate.username] = 1;
-  }
 
   let sillything = '';
 
@@ -449,23 +351,6 @@ const commands = (channel, userstate, message, self) => {
     suggestGame(cmd, userstate.username);
     return;
   }
-
-  if (tokens[0] === 'trick') {
-    if (userstate.mod || userstate.username === 'birdofchess') {
-      trickOrTrick();
-    }
-  }
-
-  if (tokens[0] === 'treat' || tokens[0] === 'treats') {
-    if (userstate.mod || userstate.username === 'birdofchess') {
-      const treat = `Head on over to ${treatLink} to pick your prize!`;
-      dangerSay(treat);
-    }
-  }
-
-  if (tokens[0] === 'event') {
-    dangerSay('When botofchess says Trick or Treat, talk in chat to be counted. After some time passes, she\'ll pick a winner. Donate $5 or more for a treat!');
-  }
 }
 
 bot.on('chat', commands);
@@ -473,9 +358,5 @@ bot.on('chat', commands);
 bot.on('disconnected', function(reason) {
   save();
 });
-
-
-getWinner();
-
 
 module.exports = bot;
