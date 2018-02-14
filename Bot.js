@@ -182,9 +182,7 @@ const mostWanted = () => {
   say(`"${ls[0].title}" is the most requested game so far! (${ls[0].count})`)
 }
 
-const vote = () => {
-
-}
+const lovebirds = new Set();
 
 const commands = (channel, userstate, message, self) => {
   if (self) return;
@@ -225,6 +223,41 @@ const commands = (channel, userstate, message, self) => {
 
 
   switch (cmd) {
+    case 'event':
+      say('say "!lovebird" to be entered into today\'s giveaway raffle!');
+      return;
+
+    case 'lovebird':
+    if (userstate.username === 'serbosaurus' || userstate.username === 'birdofchess') dangerSay('I love you');
+      else if (lovebirds.has(userstate.username)) {
+        dangerSay('<3');
+      } else {
+        lovebirds.add(userstate.username);
+        dangerSay(`Thanks, ${userstate.username} <3`);
+      }
+      return;
+    
+    case 'vdaywinner':
+      if (userstate.username === 'birdofchess' || userstate.username === 'serbosaurus') {
+        dangerSay('And the winner is...');
+        setTimeout(() => {
+          const birds = Array.from(lovebirds);
+          const i = Math.floor(Math.random() * birds.length);
+          console.log(i)
+          console.log(birds);
+          if (birds[i]) {
+            say(`${birds[i]}!!!`);
+            fs.writeFileSync(path.resolve(__dirname, `./logs/vdaywinner-${Date.now()}}.json`), JSON.stringify(birds[i]));
+          } else {
+            dangerSay('I failed... logging names on Bebop\'s computer');
+          } 
+          fs.writeFileSync(path.resolve(__dirname, './names.json'), JSON.stringify(birds));          
+        }, 3000);
+      } else {
+        dangerSay(`Nice try, ${userstate.username}.`);
+      }
+      return;
+
     /**
      *   S H A M E
      */
