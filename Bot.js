@@ -225,6 +225,10 @@ const commands = (channel, userstate, message, self) => {
 
 
   switch (cmd) {
+    case 'games':
+    case 'gameslist':
+      say('https://docs.google.com/document/d/1TkZEpv6Rqemw-5cezYN0CnRH64sR_h-Xsp_SCE6gd74/edit#heading=h.brs1odxkxlgf');
+      return;
     /**
      *   S H A M E
      */
