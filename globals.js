@@ -13,7 +13,7 @@ const OPTIONS = {
     username: 'botofchess',
     password,
   },
-  channels: ['birdofchess'],
+  channels: ['amateur_professional'],
 };
 
 const COIN_SIDES = ['heads', 'tails'];
