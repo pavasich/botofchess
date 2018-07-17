@@ -1,4 +1,4 @@
-import { password } from './.secrets';
+import { password } from './secrets';
 
 export const channel = 'birdofchess';
 
