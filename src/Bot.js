@@ -3,9 +3,10 @@ import path from 'path';
 import data from '../data.json';
 import debounce from './debounce';
 import emotes from './emotes';
-import { start_time, coin_sides, shame_quotes, quotes, channel } from './globals';
+import { start_time, coin_sides, shame_quotes, channel } from './globals';
 import bot from './client';
 import async from './async';
+import api from './api';
 
 const datapath = path.resolve(__dirname, './data.json');
 
@@ -14,7 +15,6 @@ const datapath = path.resolve(__dirname, './data.json');
  */
 let { shames } = data;
 
-
 /**
  *   S E T U P
  */
@@ -22,9 +22,43 @@ console.log('running!');
 
 const say_bounced = debounce((s) => { bot.action(channel, s) }, 2000);
 
+/**
+ * say
+ * @param {string} s
+ */
 const say = (s) => say_bounced(s);
+
+/**
+ * dangerSay
+ * @param {string} string
+ */
 const dangerSay = (string) => bot.action(channel, string);
 
+/**
+ * speak
+ * @param {Monologue} monologue
+ */
+const speak = (monologue) => {
+  const recur = (lines) => {
+    if (lines.length > 0) {
+      const [line, ...rest] = lines;
+      if (line.delay !== undefined) {
+        setTimeout(() => {
+          dangerSay(line.message);
+          if (rest.length > 0) recur(rest);
+        }, line.delay);
+      } else {
+        dangerSay(line.message);
+        if (rest.length > 0) recur(rest);
+      }
+    }
+  };
+  recur(monologue.lines);
+};
+
+/**
+ * save
+ */
 const save = () => {
   console.log('saving data...');
   fs.writeFileSync(datapath, JSON.stringify({
@@ -32,13 +66,13 @@ const save = () => {
   }));
 };
 
-bot.on('connected', function(address, port) {
+bot.on('connected', function() {
   say('I\'m alive!!');
   setInterval(save, 300000);
 });
 
 /**
- *   F U N C T I O N S
+ * shame
  */
 const shame = () => {
   shames += 1;
@@ -47,11 +81,17 @@ const shame = () => {
 };
 
 
-
+/**
+ * discord
+ */
 const discord = () => {
   say('https://discord.gg/K8mtM7s');
 };
 
+/**
+ * goHome
+ * @param {string} name
+ */
 const goHome = (name) => {
   if (name === 'serbosaurus' || name === channel) {
     bot.action(channel, 'no, im not ready to go...');
@@ -61,6 +101,10 @@ const goHome = (name) => {
   }
 };
 
+/**
+ * flipCoin
+ * @param {string} name
+ */
 const flipCoin = (name) => {
   bot.action(channel, `${name} flips a coin...`);
   const result = coin_sides[Math.floor(Math.random() * 2)];
@@ -69,6 +113,9 @@ const flipCoin = (name) => {
   }, 1500);
 };
 
+/**
+ * uptime
+ */
 const uptime = () => {
   let running = new Date() - start_time;
   running = parseInt(running / 1000);
@@ -116,28 +163,13 @@ const uptime = () => {
   say(`birdofchess has been streaming for ${s}.`);
 };
 
-const sayQuote = () => {
-  const [quote, user, date] = quotes[Math.floor(Math.random() * quotes.length)];
-  say(`local   "${quote}" - ${user}, ${date}`);
-};
-
-const rollDie = (cmd, name) => {
-  let roll = cmd.split(' ')[1];
-  if (typeof roll === 'undefined') return;
-  if (roll.length < 1) return;
-  if (roll[0].toLowerCase() === 'd' && /^\d+$/.test(roll.slice(1))) {
-    roll = roll.slice(1);
-  }
-  if (/^\d+$/.test(roll)) {
-    roll = parseInt(roll);
-    if (roll && roll > 0) {
-      const res = Math.ceil(Math.random() * roll);
-      bot.action(channel, `${name} rolls a d${roll}...`);
-      setTimeout(() => {
-        bot.action(channel, `   ${res} !`);
-      }, 1500);
-    }
-  }
+const getWinner = () => {
+  const result = api.subs.requests.pickWinner();
+  console.log(result);
+  setTimeout(() => {
+    dangerSay(`${result[0]}, requesting ${result[1]}!`);
+    dangerSay('Okay?');
+  }, 1000 * 4);
 };
 
 
@@ -164,7 +196,6 @@ const commands = (channel, userstate, message, self) => {
 
   if (sillything.length > 0) {
     bot.action(channel, sillything);
-    return;
   }
 
   if (message[0] !== '!') {
@@ -172,20 +203,22 @@ const commands = (channel, userstate, message, self) => {
   }
 
   console.log('checking out a message', userstate, message);
+  const tokens = message.replace('!', '').toLowerCase().split(' ');
+  const car = tokens[0];
+  const cdr = tokens.slice(1);
+  console.log('car', car, 'cdr', cdr);
 
-  const cmd = message.replace('!', '').toLowerCase();
-
-  const tokens = cmd.split(' ');
-
-
-
-  switch (cmd) {
+  switch (car) {
+    /**
+     * games
+     */
     case 'games':
     case 'gameslist':
-      say('https://docs.google.com/document/d/1TkZEpv6Rqemw-5cezYN0CnRH64sR_h-Xsp_SCE6gd74/edit#heading=h.brs1odxkxlgf');
+      say('https://bit.ly/2GqYEfS');
       return;
+
     /**
-     *   S H A M E
+     * shame
      */
     case 'shame':
     case 'shametoken':
@@ -193,42 +226,46 @@ const commands = (channel, userstate, message, self) => {
       return;
 
     /**
-     *   G O   H O M E
+     * gohomeyousdrunk
      */
-    case 'go home, you\'re drunk':
+    case 'gohomeyousdrunk':
       goHome(userstate.username);
       return;
 
     /**
-     *   F L I P   C O I N
+     * flip (coin)
      */
     case 'flip':
+    case 'flipcoin':
+    case 'coinflip':
+    case 'cointoss':
       flipCoin(userstate.username);
       return;
 
     /**
-     *   D I S C O R D
+     * discord
      */
     case 'discord':
       discord();
       return;
 
     /**
-     *   H E L P
+     * help
      */
     case 'help':
-      say('!shame , !flip , !roll (number) , !mostwanted , !stream , and !imanerd for bot specs.');
+    case 'commands':
+      say('!shame , !flip , !roll (number) , !quote , !hug , !stream [!uptime] , !discord , !steam , and !imanerd for bot specs.');
       return;
 
     /**
-     *   I ' M   A   N E R D
+     * imanerd
      */
     case 'imanerd':
       say('Made in JavaScript, using the tmi.js package. Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
       return;
 
     /**
-     *   U P T I M E
+     * stream; uptime
      */
     case 'stream':
     case 'uptime':
@@ -236,68 +273,111 @@ const commands = (channel, userstate, message, self) => {
       return;
 
     /**
-     *   S T E A M
+     * steam
      */
      case 'steam':
       say('steamcommunity.com/id/birdofchess');
       return;
 
     /**
-     *   Q U O T E
+     * quote
      */
     case 'quote':
-      sayQuote();
+      speak(api.actions.getQuote());
+      return;
+
+    case 'donorquote':
+      speak(api.actions.getQuote(true));
+      return;
+
+    /**
+     * startRequests
+     */
+    case 'startrequests':
+      api.subs.requests.clear();
+      dangerSay('Taking sub requests for the next game!');
+      dangerSay('You have 30 seconds!');
+      setTimeout(() => {
+        dangerSay('Times up! The winner is...');
+        getWinner();
+      }, 1000 * 30);
+      return;
+
+    /**
+     * tryagain
+     */
+    case 'tryagain':
+      if (userstate.mod) {
+        getWinner();
+      }
+      return;
+
+    /**
+     * request
+     */
+    case 'request':
+      if (userstate.subscriber) {
+        api.subs.requests.takeRequest(userstate.username, cdr.join(' '));
+      }
+      return;
+
+    /**
+     * hug
+     */
+    case 'hug':
+      if (tokens[1] && tokens[1] !== 'undefined') {
+        try {
+          const name1 = userstate.username.replace('@', '').toLowerCase();
+          const name2 = tokens[1].replace('@', '').toLowerCase();
+
+          if (name1 === name2) {
+            bot.action(channel, `@${name1} is wrapped up in a self-hug. Weird.`);
+          } else if (name2 === 'botofchess') {
+            bot.action(channel, `@${name1} hugged me! *blush*`);
+          } else {
+            try {
+              async({
+                host: 'tmi.twitch.tv',
+                path: 'group/user/birdofchess/chatters',
+                callback: ({ chatters: { moderators, viewers } }) => {
+                  if (moderators.includes(name2) || viewers.includes(name2)) {
+                    bot.action(channel, `@${name1} hugs @${name2}   :3`);
+                    return;
+                  }
+
+                  bot.action(channel, `@${name1} hugs ${name2}.`);
+                },
+              });
+            } catch (e) {
+              console.log('api error:', e);
+              bot.action(channel, `@${name1} hugs ${name2}.`);
+            }
+          }
+        } catch (e) {
+          say('What are you trying to do to me?!');
+          console.log(e);
+        }
+      }
+      return;
+
+    /**
+     * roll
+     */
+    case 'roll':
+      const monologue = api.actions.rollDie(userstate.username, cdr[0]);
+      if (monologue !== undefined) {
+        speak(monologue);
+      }
+      return;
+
+    default:
       return;
   }
-
-
-  /**
-   * H U G
-   */
-  if (tokens[0] === 'hug') {
-    if (tokens[1] && tokens[1] !== 'undefined') {
-      try {
-        const name1 = userstate.username.replace('@', '').toLowerCase();
-        const name2 = tokens[1].replace('@', '').toLowerCase();
-
-        if (name1 === name2) {
-          bot.action(channel, `@${name1} is wrapped up in a self-hug. Weird.`);
-        } else if (name2 === 'botofchess') {
-          bot.action(channel, `@${name1} hugged me! *blush*`);
-        } else {
-          async({
-            host: 'tmi.twitch.tv',
-            path: 'group/user/birdofchess/chatters',
-            callback: ({ chatters: { moderators, viewers } }) => {
-              if (moderators.includes(name2) || viewers.includes(name2)) {
-                bot.action(channel, `@${name1} hugs @${name2}   :3`);
-                return;
-              }
-
-              bot.action(channel, `@${name1} hugs ${name2}.`);
-            },
-          });
-        }
-      } catch (e) {
-        say('What are you trying to do to me?!');
-        console.log(e);
-      }
-    }
-    return;
-  }
-
-  /**
-   *   R O L L   D I E
-   */
-  if (tokens[0] === 'roll') {
-    rollDie(cmd, userstate.username);
-    return;
-  }
-};
+}
 
 bot.on('chat', commands);
 
-bot.on('disconnected', function(reason) {
+bot.on('disconnected', function() {
   save();
 });
 
