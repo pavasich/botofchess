@@ -1,25 +1,19 @@
-require('babel-register');
-
-const fs = require('fs');
-const path = require('path');
-const tmi = require('tmi.js');
-const _ = require('lodash');
-const async = require('./async');
-const data = require('./data.json');
-const debounce = require('./debounce');
-const emotes = require('./emotes');
-const GLOBALS = require('./globals');
-let quotes = require('./quotes.json');
+import fs from 'fs';
+import path from 'path';
+import data from './data.json';
+import debounce from './debounce';
+import emotes from './emotes';
+import GLOBALS from './globals';
+import { default as bot } from './client';
 
 const datapath = path.resolve(__dirname, './data.json');
-const topics = require('./topics.js');
 
 
 /**
  *   G L O B A L S
  */
 
-const { OPTIONS, START_TIME, COIN_SIDES, SHAMEQUOTES } = GLOBALS;
+const { OPTIONS, START_TIME, COIN_SIDES, SHAME_QUOTES, QUOTES } = GLOBALS;
 
 const channel = OPTIONS.channels[0];
 
@@ -29,8 +23,6 @@ let { shames, suggestions } = data;
 /**
  *   S E T U P
  */
-var bot = new tmi.client(OPTIONS);
-
 console.log('running!');
 
 const say_bounced = debounce((s) => { bot.action(channel, s) }, 2000);
@@ -43,7 +35,6 @@ const save = () => {
   fs.writeFileSync(datapath, JSON.stringify({
     shames,
     suggestions,
-    quotes,
   }));
 };
 
@@ -55,10 +46,10 @@ bot.on('connected', function(address, port) {
 /**
  *   F U N C T I O N S
  */
-const shame = (s) => {
+const shame = () => {
   shames += 1;
-  const i = Math.floor(Math.random() * SHAMEQUOTES.length);
-  say(`${SHAMEQUOTES[i]} (${shames} total)`);
+  const i = Math.floor(Math.random() * SHAME_QUOTES.length);
+  say(`${SHAME_QUOTES[i]} (${shames} total)`);
 };
 
 
@@ -132,7 +123,7 @@ const uptime = () => {
 };
 
 const sayQuote = () => {
-  const q = quotes[Math.floor(Math.random() * quotes.length)];
+  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
   say(`   "${q.q}" - ${q.d}`);
 };
 
