@@ -3,21 +3,16 @@ import path from 'path';
 import data from './data.json';
 import debounce from './debounce';
 import emotes from './emotes';
-import GLOBALS from './globals';
-import { default as bot } from './client';
+import { start_time, coin_sides, shame_quotes, quotes, channel } from './globals';
+import bot from './client';
+import async from './async';
 
 const datapath = path.resolve(__dirname, './data.json');
-
 
 /**
  *   G L O B A L S
  */
-
-const { OPTIONS, START_TIME, COIN_SIDES, SHAME_QUOTES, QUOTES } = GLOBALS;
-
-const channel = OPTIONS.channels[0];
-
-let { shames, suggestions } = data;
+let { shames } = data;
 
 
 /**
@@ -34,7 +29,6 @@ const save = () => {
   console.log('saving data...');
   fs.writeFileSync(datapath, JSON.stringify({
     shames,
-    suggestions,
   }));
 };
 
@@ -48,8 +42,8 @@ bot.on('connected', function(address, port) {
  */
 const shame = () => {
   shames += 1;
-  const i = Math.floor(Math.random() * SHAME_QUOTES.length);
-  say(`${SHAME_QUOTES[i]} (${shames} total)`);
+  const i = Math.floor(Math.random() * shame_quotes.length);
+  say(`${shame_quotes[i]} (${shames} total)`);
 };
 
 
@@ -69,14 +63,14 @@ const goHome = (name) => {
 
 const flipCoin = (name) => {
   bot.action(channel, `${name} flips a coin...`);
-  const result = COIN_SIDES[Math.floor(Math.random() * 2)];
+  const result = coin_sides[Math.floor(Math.random() * 2)];
   setTimeout(() => {
     bot.action(channel, `   ${result} !`);
   }, 1500);
 };
 
 const uptime = () => {
-  let running = new Date() - START_TIME;
+  let running = new Date() - start_time;
   running = parseInt(running / 1000);
   const hours = parseInt(running / (60 * 60));
   running %= (60 * 60);
@@ -123,7 +117,7 @@ const uptime = () => {
 };
 
 const sayQuote = () => {
-  const q = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  const q = quotes[Math.floor(Math.random() * quotes.length)];
   say(`   "${q.q}" - ${q.d}`);
 };
 
@@ -165,17 +159,6 @@ const suggestGame = (cmd, name) => {
   }
 };
 
-const mostWanted = () => {
-  const ls = Object.keys(suggestions)
-  .map(s =>
-    ({ title: s, count: Object.keys(suggestions[s]).length }))
-  .sort((a, b) => b.count - a.count);
-  say(`"${ls[0].title}" is the most requested game so far! (${ls[0].count})`)
-}
-
-const vote = () => {
-
-}
 
 const commands = (channel, userstate, message, self) => {
   if (self) return;
@@ -243,15 +226,6 @@ const commands = (channel, userstate, message, self) => {
       return;
 
     /**
-     *   M O S T   W A N T E D
-     */
-    case 'mostwanted':
-    case 'mostWanted':
-    case 'most wanted':
-      mostWanted();
-      return;
-
-    /**
      *   D I S C O R D
      */
     case 'discord':
@@ -262,7 +236,7 @@ const commands = (channel, userstate, message, self) => {
      *   H E L P
      */
     case 'help':
-      say('!shame , !flip , !roll (number) , !suggest (string) , !mostwanted , !stream , and !imanerd for bot specs.');
+      say('!shame , !flip , !roll (number) , !mostwanted , !stream , and !imanerd for bot specs.');
       return;
 
     /**
@@ -338,20 +312,10 @@ const commands = (channel, userstate, message, self) => {
     rollDie(cmd, userstate.username);
     return;
   }
-
-  /**
-   *   S U G G E S T   G A M E
-   */
-  if (tokens[0] === 'suggest') {
-    suggestGame(cmd, userstate.username);
-    return;
-  }
-}
+};
 
 bot.on('chat', commands);
 
 bot.on('disconnected', function(reason) {
   save();
 });
-
-module.exports = bot;

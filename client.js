@@ -1,8 +1,6 @@
 import TwitchJS from 'twitch-js';
-import { OPTIONS } from './globals';
+import { options } from './globals';
 
-const client = new TwitchJS.client(OPTIONS);
-
-client.connect();
+const client = new TwitchJS.client(options);
 
 export default client;

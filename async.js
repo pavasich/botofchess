@@ -1,6 +1,6 @@
-const http = require('http');
+import http from 'http';
 
-module.exports = ({ host, path = '/', callback }) => {
+export default ({ host, path = '/', callback }) => {
   let _path = path[0] === '/' ? path : `/${path}`;
   return http.get({
     host,

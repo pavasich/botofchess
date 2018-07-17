@@ -1,8 +1,10 @@
-const START_TIME = new Date();
-const { password } = require('./.secrets');
-const channel = 'birdofchess';
+import { password } from './.secrets';
 
-const OPTIONS = {
+export const channel = 'birdofchess';
+
+export const start_time = new Date();
+
+export const options = {
   options: {
     debug: true,
   },
@@ -17,9 +19,9 @@ const OPTIONS = {
   channels: [`#${channel}`],
 };
 
-const COIN_SIDES = ['heads', 'tails'];
+export const coin_sides = ['heads', 'tails'];
 
-const SHAME_QUOTES = [
+export const shame_quotes = [
   '"The Rooks that the world calls immoral are Rooks that show the world its own shame." - Oscar Wilde',
   '"Before there is victory, there is always shame."',
   '"I never learned shame at home. I had to go to Rook for that." - Dick Gregory',
@@ -48,7 +50,7 @@ const SHAME_QUOTES = [
   `"Never feel shame for trying and failing; for those who have never failed are those who have never tried." - Og Mandino`,
 ];
 
-const QUOTES = [
+export const quotes = [
   [
     "I'm gonna stop putting weird dirty stuff in my mouth.",
     'Rook',
@@ -226,11 +228,3 @@ const QUOTES = [
     '2018',
   ],
 ];
-
-module.exports = {
-  START_TIME,
-  OPTIONS,
-  COIN_SIDES,
-  SHAME_QUOTES,
-  QUOTES,
-};
