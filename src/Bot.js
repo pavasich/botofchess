@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import data from './data.json';
+import data from '../data.json';
 import debounce from './debounce';
 import emotes from './emotes';
 import { start_time, coin_sides, shame_quotes, quotes, channel } from './globals';
@@ -117,8 +117,8 @@ const uptime = () => {
 };
 
 const sayQuote = () => {
-  const q = quotes[Math.floor(Math.random() * quotes.length)];
-  say(`   "${q.q}" - ${q.d}`);
+  const [quote, user, date] = quotes[Math.floor(Math.random() * quotes.length)];
+  say(`local   "${quote}" - ${user}, ${date}`);
 };
 
 const rollDie = (cmd, name) => {
@@ -137,25 +137,6 @@ const rollDie = (cmd, name) => {
         bot.action(channel, `   ${res} !`);
       }, 1500);
     }
-  }
-};
-
-const suggestGame = (cmd, name) => {
-  const sug = cmd.replace('suggest ', '').toLowerCase();
-  console.log(sug);
-  if (sug.length > 1) {
-    if (typeof suggestions[sug] === 'undefined') {
-      suggestions[sug] = { [name]: 1 }
-    } else {
-      suggestions[sug][name] = 1;
-    }
-
-    const users = Object.keys(suggestions[sug]);
-    const s = users.length > 1 ?
-      `Thanks! ${users.length} people have suggested "${sug}" so far.` :
-      `Thanks! You are the first person to suggest "${sug}".`;
-
-    say(s);
   }
 };
 
@@ -243,7 +224,7 @@ const commands = (channel, userstate, message, self) => {
      *   I ' M   A   N E R D
      */
     case 'imanerd':
-      say('Made in JavaScript, using the tmi.js package. Shame tokens & game suggestions are saved as JSON to serbosaurus\' PC. More details will be available as the bot gains functionality :3');
+      say('Made in JavaScript, using the tmi.js package. Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
       return;
 
     /**
@@ -319,3 +300,5 @@ bot.on('chat', commands);
 bot.on('disconnected', function(reason) {
   save();
 });
+
+export default bot;
