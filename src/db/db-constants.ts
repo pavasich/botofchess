@@ -1,6 +1,11 @@
 export const MODELS = {
     USER: 'User',
     SHAME: 'Shame',
+    CURRENCY: 'Currency',
+    TICKETS: 'Tickets',
+    SHAME_QUOTE: 'Shame_Quote',
+    DONOR_QUOTE: 'Donor_Quote',
+    QUOTE: 'Quote',
 };
 
 export const STATUSES = {

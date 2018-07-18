@@ -3,7 +3,7 @@ import Data from '../models/Data';
 import { STATUSES } from './db-constants';
 
 const minute = 1000 * 60;
-const minutesUntilStale = 30;
+const minutesUntilStale = 10;
 const staleTimeout = minute * minutesUntilStale;
 const isFresh = (lastUpdated: number): boolean => {
     const now = Date.now();

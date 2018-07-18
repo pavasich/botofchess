@@ -7,13 +7,14 @@
     "start": "if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod; else NODE_ENV=development npm run dev; fi",
     "dev": "nodemon src --exec babel-node --extensions \".ts,.js\"",
     "build": "npx babel src --extensions \".ts,.js\" --out-dir dist",
-    "prod": "npx babel src --extensions \".ts,.js\" --out-dir dist && node dist"
+    "prod": "NODE_ENV=production npx babel src --extensions \".ts,.js\" --out-dir dist && NODE_ENV=production node dist"
   },
   "author": "pavasich",
   "license": "ISC",
   "repository": "https://github.com/pavasich/twitchbot",
   "dependencies": {
     "@types/lodash": "^4.14.112",
+    "isomorphic-fetch": "^2.2.1",
     "lowdb": "^1.0.0",
     "twitch-js": "^1.2.12"
   },

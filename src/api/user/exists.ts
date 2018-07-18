@@ -1,5 +1,4 @@
-import User, { sanitizeDirtyUser } from '../../models/User';
-import DirtyUser from '../../models/DirtyUser';
+import { sanitizeDirtyUser } from '../../models/User';
 import db from '../../db';
 import { MODELS } from '../../db/db-constants';
 

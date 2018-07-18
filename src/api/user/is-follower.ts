@@ -4,7 +4,6 @@ import exists from './exists';
 import db from '../../db';
 import isFresh from '../../db/is-fresh';
 import { STATUSES, MODELS } from '../../db/db-constants';
-import User from '../../models/User';
 import { channelId } from '../../globals';
 
 const verifyFollowerUrl = (userId: string|number) =>
