@@ -1,12 +1,19 @@
 import fs from 'fs';
 import path from 'path';
+import fetch from 'whatwg-fetch';
+import debounce from 'lodash/debounce';
+import Monologue from './models/Monologue';
+import Line from './models/Line';
+import DirtyUser from './models/DirtyUser';
+import User, { sanitizeDirtyUser } from './models/User';
 import data from '../data.json';
-import debounce from './debounce';
-import emotes from './emotes';
+import emotes from './util/emotes';
 import { start_time, coin_sides, shame_quotes, channel } from './globals';
 import bot from './client';
-import async from './async';
 import api from './api';
+import { pickRand } from './util/arrays';
+
+const chatters = 'tmi.twitch.tv/group/user/birdofchess/chatters';
 
 const datapath = path.resolve(__dirname, './data.json');
 
@@ -26,20 +33,20 @@ const say_bounced = debounce((s) => { bot.action(channel, s) }, 2000);
  * say
  * @param {string} s
  */
-const say = (s) => say_bounced(s);
+const say = (s: string) => say_bounced(s);
 
 /**
  * dangerSay
  * @param {string} string
  */
-const dangerSay = (string) => bot.action(channel, string);
+const dangerSay = (string: string) => bot.action(channel, string);
 
 /**
  * speak
  * @param {Monologue} monologue
  */
-const speak = (monologue) => {
-  const recur = (lines) => {
+const speak = (monologue: Monologue) => {
+  const recur = (lines: Array<Line>) => {
     if (lines.length > 0) {
       const [line, ...rest] = lines;
       if (line.delay !== undefined) {
@@ -66,20 +73,20 @@ const save = () => {
   }));
 };
 
-bot.on('connected', function() {
-  say('I\'m alive!!');
-  setInterval(save, 300000);
-});
-
 /**
  * shame
  */
 const shame = () => {
-  shames += 1;
-  const i = Math.floor(Math.random() * shame_quotes.length);
-  say(`${shame_quotes[i]} (${shames} total)`);
+    say(`${pickRand(shame_quotes)} (${++shames} total)`);
 };
 
+/**
+ * on connect
+ */
+bot.on('connected', function() {
+  say('I\'m alive!!');
+  setInterval(save, 300000);
+});
 
 /**
  * discord
@@ -92,7 +99,7 @@ const discord = () => {
  * goHome
  * @param {string} name
  */
-const goHome = (name) => {
+const goHome = (name: string) => {
   if (name === 'serbosaurus' || name === channel) {
     bot.action(channel, 'no, im not ready to go...');
     bot.disconnect();
@@ -105,23 +112,24 @@ const goHome = (name) => {
  * flipCoin
  * @param {string} name
  */
-const flipCoin = (name) => {
+const flipCoin = (name: string) => {
   bot.action(channel, `${name} flips a coin...`);
-  const result = coin_sides[Math.floor(Math.random() * 2)];
+  const result = pickRand(coin_sides);
   setTimeout(() => {
     bot.action(channel, `   ${result} !`);
   }, 1500);
 };
 
 /**
- * uptime
+ * stream [uptime]
  */
 const uptime = () => {
-  let running = new Date() - start_time;
-  running = parseInt(running / 1000);
-  const hours = parseInt(running / (60 * 60));
+  const now: number = Date.now();
+  let running = (now - start_time);
+  running = Math.floor(running / 1000);
+  const hours = Math.floor(running / (60 * 60));
   running %= (60 * 60);
-  const minutes = parseInt(running / (60));
+  const minutes = Math.floor(running / (60));
   const seconds = running % 60;
 
   const t = [];
@@ -173,13 +181,13 @@ const getWinner = () => {
 };
 
 
-const commands = (channel, userstate, message, self) => {
+const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
   if (self) return;
 
   let sillything = '';
 
-  let temp = message.split(' ');
-  for (let i = temp.length - 1; i >= 0; i--) {
+  let temp: Array<string> = message.split(' ');
+  for (let i: number = temp.length - 1; i >= 0; i--) {
     if (emotes[temp[i]]) {
       sillything += temp[i] + ' ';
     }
@@ -254,14 +262,14 @@ const commands = (channel, userstate, message, self) => {
      */
     case 'help':
     case 'commands':
-      say('!shame , !flip , !roll (number) , !quote , !hug , !stream [!uptime] , !discord , !steam , and !imanerd for bot specs.');
+      say('!help [!commands] | !shame [!shametoken] , !flip [!flipcoin|!coinflip|!cointoss] , !games [!gameslist] , !roll (number) , !quote , !donorquote, !request (during sub requests) !hug , !stream [!uptime] , !discord , !steam , and !imanerd for bot specs.');
       return;
 
     /**
      * imanerd
      */
     case 'imanerd':
-      say('Made in JavaScript, using the tmi.js package. Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
+      say('Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
       return;
 
     /**
@@ -336,18 +344,15 @@ const commands = (channel, userstate, message, self) => {
             bot.action(channel, `@${name1} hugged me! *blush*`);
           } else {
             try {
-              async({
-                host: 'tmi.twitch.tv',
-                path: 'group/user/birdofchess/chatters',
-                callback: ({ chatters: { moderators, viewers } }) => {
-                  if (moderators.includes(name2) || viewers.includes(name2)) {
-                    bot.action(channel, `@${name1} hugs @${name2}   :3`);
-                    return;
-                  }
-
-                  bot.action(channel, `@${name1} hugs ${name2}.`);
-                },
-              });
+              const response = await fetch(chatters, { method: 'GET' });
+              if (response.ok) {
+                const { chatters: { moderators, viewers } } = response.json();
+                if (moderators.includes(name2) || viewers.includes(name2)) {
+                  bot.action(channel, `@${name1} hugs @${name2}   :3`);
+                  return;
+                }
+                bot.action(channel, `@${name1} hugs ${name2}.`);
+              }
             } catch (e) {
               console.log('api error:', e);
               bot.action(channel, `@${name1} hugs ${name2}.`);
@@ -370,10 +375,14 @@ const commands = (channel, userstate, message, self) => {
       }
       return;
 
+    case 'register':
+      api.user.create(sanitizeDirtyUser(userstate));
+      return;
+
     default:
       return;
   }
-}
+};
 
 bot.on('chat', commands);
 

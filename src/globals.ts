@@ -1,10 +1,11 @@
 import { password } from './secrets';
 
-export const channel = 'birdofchess';
+export const channel: string = 'birdofchess';
+export const channelId: number = 142204178;
 
-export const start_time = new Date();
+export const start_time: number = Date.now();
 
-export const options = {
+export const options: object = {
   options: {
     debug: true,
   },
@@ -19,9 +20,9 @@ export const options = {
   channels: [`#${channel}`],
 };
 
-export const coin_sides = ['heads', 'tails'];
+export const coin_sides: Array<string> = ['heads', 'tails'];
 
-export const shame_quotes = [
+export const shame_quotes: Array<string> = [
   '"The Rooks that the world calls immoral are Rooks that show the world its own shame." - Oscar Wilde',
   '"Before there is victory, there is always shame."',
   '"I never learned shame at home. I had to go to Rook for that." - Dick Gregory',
@@ -50,7 +51,7 @@ export const shame_quotes = [
   `"Never feel shame for trying and failing; for those who have never failed are those who have never tried." - Og Mandino`,
 ];
 
-export const quotes = [
+export const quotes: Array<Array<string>> = [
   [
     "I'm gonna stop putting weird dirty stuff in my mouth.",
     'Rook',

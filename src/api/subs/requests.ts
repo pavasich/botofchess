@@ -1,6 +1,11 @@
+import { pickRand } from '../../util/arrays';
+
 const winners = new Set();
 const requesters = new Set();
-const requests = {};
+interface Requests {
+  [key: string]: string
+}
+const requests: Requests = {};
 
 /**
  * takeRequest
@@ -8,7 +13,7 @@ const requests = {};
  * @param {string} requestedGame
  * @returns {boolean} - request was successful or not
  */
-export const takeRequest = (username, requestedGame) => {
+export const takeRequest = (username: string, requestedGame: string): boolean => {
   console.log(username, requestedGame);
   if (winners.has(username)) return false;
   if (requesters.has(username)) return false;
@@ -31,7 +36,7 @@ export const pickWinner = () => {
     const array = requesters.size > 0
       ? [...requesters]
       : [...winners];
-    const winner = array[parseInt(Math.random() * array.length, 10)];
+    const winner = pickRand(array);
     console.log(winner);
     winners.add(winner);
     console.log(winner, requests[winner]);

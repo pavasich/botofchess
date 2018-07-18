@@ -1,20 +1,21 @@
 {
   "name": "twitchbot",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "birdofchess twitch bot",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js --exec babel-node",
-    "build": "npx babel src --out-dir dist",
-    "prod": "npx babel src --out-dir dist && node dist"
+    "start": "if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod; else NODE_ENV=development npm run dev; fi",
+    "dev": "nodemon src --exec babel-node --extensions \".ts,.js\"",
+    "build": "npx babel src --extensions \".ts,.js\" --out-dir dist",
+    "prod": "npx babel src --extensions \".ts,.js\" --out-dir dist && node dist"
   },
   "author": "pavasich",
   "license": "ISC",
   "repository": "https://github.com/pavasich/twitchbot",
   "dependencies": {
-    "lodash": "^4.17.10",
-    "twitch-js": "^1.2.12",
-    "webpack": "^4.16.1"
+    "@types/lodash": "^4.14.112",
+    "lowdb": "^1.0.0",
+    "twitch-js": "^1.2.12"
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.54",
@@ -22,8 +23,13 @@
     "@babel/node": "^7.0.0-beta.54",
     "@babel/plugin-proposal-class-properties": "^7.0.0-beta.54",
     "@babel/plugin-transform-runtime": "^7.0.0-beta.54",
+    "@babel/polyfill": "^7.0.0-beta.54",
     "@babel/preset-env": "^7.0.0-beta.54",
     "@babel/preset-typescript": "^7.0.0-beta.54",
-    "@babel/runtime": "^7.0.0-beta.54"
+    "@babel/runtime": "^7.0.0-beta.54",
+    "@types/lowdb": "^1.0.4",
+    "@types/node": "^10.5.2",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "typescript": "^2.9.2"
   }
 }

@@ -1,4 +1,7 @@
-module.exports = {
+interface emotes {
+    [key: string]: number
+}
+export default <emotes>{
   ':)': 1,
   ':(': 1,
   ':o': 1,

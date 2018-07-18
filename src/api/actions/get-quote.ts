@@ -1,15 +1,13 @@
 import { quotes } from '../../globals';
 import donorQuotes from '../../donor-quotes';
-import Monologue from '../../util/Monologue';
+import Monologue from '../../models/Monologue';
+import { pickRand } from '../../util/arrays';
 
-const getRandomEntryFrom = (array) =>
-  array[Math.floor(Math.random() * array.length)];
-
-export default (isDonorQuote = false) => {
+export default (isDonorQuote: boolean = false): Monologue => {
   const array = isDonorQuote
     ? donorQuotes
     : quotes;
-  const quote = getRandomEntryFrom(array);
+  const quote = pickRand(array);
   const monologue = new Monologue();
   monologue.add(`   "${quote[0]}" - ${quote[1]}, ${quote[2]}`);
   return monologue;
