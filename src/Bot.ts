@@ -1,33 +1,35 @@
-import fs from 'fs';
-import path from 'path';
 import debounce from 'lodash/debounce';
 import shuffle from 'lodash/shuffle';
 import Monologue from './models/Monologue';
-import data from '../data.json';
 import emotes from './util/emotes';
-import { coin_sides, channel } from './globals';
+import { coin_sides, channel as data_channel } from './globals';
 import bot from './client';
 import api from './api';
-import { getRandomShameQuote } from './api/quote/shame-quote';
 import { pickRand } from './util/arrays';
 
 const chatters = 'tmi.twitch.tv/group/user/birdofchess/chatters';
 
-const datapath = path.resolve(__dirname, './data.json');
-
 let start_time: number|void;
 
-/**
- *   G L O B A L S
- */
-let { shames } = data;
+const isMod = ({ mod, username }: DirtyUser): boolean => {
+    const b = mod || username === data_channel || username === 'birdofchess';
+    console.log(mod, username, '=', b);
+    return b;
+}
+
+let enableLogging = false;
+const logAction = (string: string) => {
+    if (enableLogging) {
+        api.log(`${string} - t = ${(new Date()).toJSON()}`);
+    }
+};
 
 /**
  *   S E T U P
  */
 console.log('running!');
 let broadcasting = false;
-const say_bounced = debounce((s) => { bot.action(channel, s) }, 2000);
+const say_bounced = debounce((s) => { bot.action(data_channel, s) }, 2000);
 
 /**
  * say
@@ -39,7 +41,7 @@ const say = (s: string) => say_bounced(s);
  * dangerSay
  * @param {string} string
  */
-const dangerSay = (string: string) => bot.action(channel, string);
+const dangerSay = (string: string) => bot.action(data_channel, string);
 
 /**
  * speak
@@ -64,28 +66,10 @@ const speak = (monologue: Monologue) => {
 };
 
 /**
- * save
- */
-const save = () => {
-    console.log('saving data...');
-    fs.writeFileSync(datapath, JSON.stringify({
-        shames,
-    }));
-};
-
-/**
- * shame
- */
-const shame = () => {
-    say(`${getRandomShameQuote()} (${++shames} total)`);
-};
-
-/**
  * on connect
  */
 bot.on('connected', function() {
     say('I\'m alive!!');
-    setInterval(save, 300000);
 });
 
 /**
@@ -100,8 +84,8 @@ const discord = () => {
  * @param {string} name
  */
 const goHome = (name: string) => {
-    if (name === 'serbosaurus' || name === channel) {
-        bot.action(channel, 'no, im not ready to go...');
+    if (name === 'serbosaurus' || name === data_channel) {
+        bot.action(data_channel, 'no, im not ready to go...');
         bot.disconnect();
     } else {
         say('bitch you can\'t tell me what to do');
@@ -113,10 +97,10 @@ const goHome = (name: string) => {
  * @param {string} name
  */
 const flipCoin = (name: string) => {
-    bot.action(channel, `${name} flips a coin...`);
+    bot.action(data_channel, `${name} flips a coin...`);
     const result = pickRand(coin_sides);
     setTimeout(() => {
-        bot.action(channel, `   ${result} !`);
+        bot.action(data_channel, `   ${result} !`);
     }, 1500);
 };
 
@@ -177,25 +161,25 @@ const uptime = () => {
 
 let interval: Timer;
 const startStream = (userstate: DirtyUser) => {
-    if (userstate.mod) {
+    if (isMod(userstate)) {
         broadcasting = true;
         start_time = Date.now();
         interval = setInterval(() => {
             if (broadcasting) {
                 api.actions.distributeCurrency();
-                bot.action(channel, 'Shame tokens have been deposited! (+10)');
+                bot.action(data_channel, 'Shame tokens have been deposited! (+20)');
             }
         }, 1000 * 60 * 20);
-        bot.action(channel, 'Here goes!');
+        bot.action(data_channel, 'Here goes!');
     }
 };
 
 const endStream = (userstate: DirtyUser) => {
-    if (userstate.mod) {
+    if (isMod(userstate)) {
         broadcasting = false;
         start_time = undefined;
         clearInterval(interval);
-        bot.action(channel, 'Gooooooooooobie!');
+        bot.action(data_channel, 'Gooooooooooobie!');
     }
 };
 
@@ -210,8 +194,11 @@ const getWinner = () => {
 
 const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
     if (self) return;
-
     api.user.dirty.upsert(userstate);
+
+    if (enableLogging) {
+        api.word.saveWords(userstate, message);
+    }
 
     let sillything = [];
     let sillysize = 0;
@@ -247,7 +234,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
     const tokens = message.replace('!', '').toLowerCase().split(' ');
     const car = tokens[0];
     const cdr = tokens.slice(1);
-    console.log('car', car, 'cdr', cdr);
+    let writeLog = true;
 
     switch (car) {
         /**
@@ -256,22 +243,22 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'games':
         case 'gameslist':
             say('https://bit.ly/2GqYEfS');
-            return;
+            break;
 
         /**
          * shame
          */
         case 'shame':
         case 'shametoken':
-            shame();
-            return;
+            say(api.actions.shame());
+            break;
 
         /**
          * gohomeyousdrunk
          */
         case 'gohomeyousdrunk':
             goHome(userstate.username);
-            return;
+            break;
 
         /**
          * flip (coin)
@@ -281,29 +268,29 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'coinflip':
         case 'cointoss':
             flipCoin(userstate.username);
-            return;
+            break;
 
         /**
          * discord
          */
         case 'discord':
             discord();
-            return;
+            break;
 
         /**
          * help
          */
         case 'help':
         case 'commands':
-            say('!help [!commands] | !shame [!shametoken] , !flip [!flipcoin|!coinflip|!cointoss] , !games [!gameslist] , !roll (number) , !quote , !donorquote, !request (during sub requests) !hug , !stream [!uptime] , !discord , !steam , and !imanerd for bot specs.');
-            return;
+            bot.whisper(userstate.username, '!help [!commands] || !shame [!shametoken] || !flip [!flipcoin|!coinflip|!cointoss] || !games [!gameslist] || !roll (number) || !quote || !donorquote || !request (during sub requests) || !hug || !stream [!uptime] || !discord || !steam || !balance || !giveaway [!event] || !ffxiv || !gw2 || !battlenet [!bnet|!btag|!battletag|!ow|!overwatch] || !imanerd for bot specs.');
+            break;
 
         /**
          * imanerd
          */
         case 'imanerd':
-            say('Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
-            return;
+            bot.whisper(userstate.username, 'Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
+            break;
 
         /**
          * stream; uptime
@@ -311,25 +298,25 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'stream':
         case 'uptime':
             uptime();
-            return;
+            break;
 
         /**
          * steam
          */
         case 'steam':
             say('steamcommunity.com/id/birdofchess');
-            return;
+            break;
 
         /**
          * quote
          */
         case 'quote':
             speak(api.actions.getQuote());
-            return;
+            break;
 
         case 'donorquote':
             speak(api.actions.getQuote(true));
-            return;
+            break;
 
         /**
          * startRequests
@@ -342,16 +329,16 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                 dangerSay('Times up! The winner is...');
                 getWinner();
             }, 1000 * 30);
-            return;
+            break;
 
         /**
          * tryagain
          */
         case 'tryagain':
-            if (userstate.mod) {
+            if (isMod(userstate)) {
                 getWinner();
             }
-            return;
+            break;
 
         /**
          * request
@@ -360,7 +347,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (userstate.subscriber) {
                 api.subs.requests.takeRequest(userstate.username, cdr.join(' '));
             }
-            return;
+            break;
 
         /**
          * hug
@@ -377,12 +364,12 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                         bot.action(channel, `@${name1} hugged me! *blush*`);
                     } else {
                         try {
-                            const response = await fetch(chatters, {method: 'GET'});
+                            const response = await fetch(chatters, { method: 'GET' });
                             if (response.ok) {
                                 const {chatters: {moderators, viewers}} = await response.json();
                                 if (moderators.includes(name2) || viewers.includes(name2)) {
                                     bot.action(channel, `@${name1} hugs @${name2}   :3`);
-                                    return;
+                                    break;
                                 }
                                 bot.action(channel, `@${name1} hugs ${name2}.`);
                             }
@@ -396,7 +383,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                     console.log(e);
                 }
             }
-            return;
+            break;
 
         /**
          * roll
@@ -406,36 +393,95 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (monologue !== undefined) {
                 speak(monologue);
             }
-            return;
+            break;
 
+        /**
+         * broadcast start|end
+         */
         case 'broadcast':
-            if (userstate.mod) {
+            if (isMod(userstate)) {
                 if (cdr[0] === 'start') startStream(userstate);
                 else if (cdr[0] === 'end') endStream(userstate);
-                else bot.action(channel, 'invalid syntax - !broadcast [start|end]')
+                else bot.whisper(userstate.username, 'invalid syntax - !broadcast [start|end]')
             }
-            return;
+            break;
 
         case 'startstream':
             startStream(userstate);
-            return;
+            break;
 
         case 'endstream':
             endStream(userstate);
-            return;
+            break;
 
+        /**
+         * event|giveaway
+         */
         case 'event':
-            say('It\'s the beach bird giveaway! Hang out and get tokens! Redeem them for a chance to win!')
+        case 'giveaway':
+            say(`It's the beach birds giveaway! Hang out, earn tokens while in chat, and exchange them for raffle tickets!  Prizes and details at: http://bit.ly/beach-birds #beach-birds`);
+            break;
+
+        /**
+         * balance
+         */
+        case 'balance':
+            const balance = api.currency.getBalanceForDirtyUser(userstate);
+            let s = balance === 1
+            ? ''
+            : 's';
+            bot.whisper(userstate.username, `You have ${balance} token${s} in the bank.`);
+            break;
+
+        case 'purchase':
+            const result = api.currency.purchase(userstate, parseInt(cdr[0], 10), cdr[1]);
+            bot.whisper(userstate.username, result);
+            break;
+
+        /**
+         * enable logging - disabled by default
+         */
+        case 'enablelogging':
+            if (isMod(userstate)) {
+                enableLogging = true;
+            }
+            break;
+        case 'disableLogging':
+            if (isMod(userstate)) {
+                enableLogging = false;
+            }
+            break;
+
+        case 'ffxiv':
+            say('[Arden Everleigh :: Aether - Zalera]');
+            break;
+
+        case 'gw2':
+            say("[Rook.6302 :: Yak's Bend]");
+            break;
+
+        case 'battlenet':
+        case 'bnet':
+        case 'ow':
+        case 'overwatch':
+        case 'btag':
+        case 'battletag':
+            say("[Rook#11953 :: Main], [Rook#11992 :: Alternate]");
+            break;
 
         default:
-            return;
+            writeLog = false;
+            break;
+    }
+    if (writeLog && enableLogging) {
+        logAction(message);
     }
 };
 
 bot.on('chat', commands);
 
 bot.on('disconnected', function() {
-    save();
+    process.exit(0);
 });
 
 export default bot;

@@ -1,5 +1,4 @@
-import db from '../../db';
-import { MODELS } from '../../db/db-constants';
+import db, { MODELS } from '../../db';
 import { pickRand } from '../../util/arrays';
 
 export const getRandomQuote = () => pickRand(db.get(MODELS.QUOTE).value());

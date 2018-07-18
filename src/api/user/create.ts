@@ -1,7 +1,5 @@
-import DirtyUser from '../../models/DirtyUser';
-import User, { sanitizeDirtyUser } from '../../models/User';
-import db from '../../db';
-import { MODELS } from '../../db/db-constants';
+import { sanitizeDirtyUser } from '../../models/User';
+import db, { MODELS } from '../../db';
 import exists from './exists';
 
 const create = (user: User): boolean => {

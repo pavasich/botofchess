@@ -7,7 +7,7 @@
     "start": "if [ \"$NODE_ENV\" = \"production\" ]; then npm run prod; else NODE_ENV=development npm run dev; fi",
     "dev": "nodemon src --exec babel-node --extensions \".ts,.js\"",
     "build": "npx babel src --extensions \".ts,.js\" --out-dir dist",
-    "prod": "NODE_ENV=production npx babel src --extensions \".ts,.js\" --out-dir dist && NODE_ENV=production node dist"
+    "prod": "NODE_ENV=production npx babel src --extensions \".ts,.js\" --out-dir dist && NODE_ENV=production forever dist"
   },
   "author": "pavasich",
   "license": "ISC",

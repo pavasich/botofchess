@@ -1,6 +1,5 @@
 import { sanitizeDirtyUser } from '../../models/User';
-import db from '../../db';
-import { MODELS } from '../../db/db-constants';
+import db, { MODELS } from '../../db';
 import exists from './exists';
 
 const update = (user: User): boolean => {

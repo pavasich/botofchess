@@ -8,12 +8,13 @@ const db = low(adapter);
 
 const defaultValues = {
     [MODELS.USER]: {},
-    [MODELS.SHAME]: 0,
     [MODELS.CURRENCY]: {},
     [MODELS.TICKETS]: {},
+    [MODELS.LOG]: [],
     ...seed,
 };
 
 db.defaults(defaultValues).write();
 
+export { MODELS } from './db-constants';
 export default db;

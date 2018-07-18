@@ -6,6 +6,8 @@ export const MODELS = {
     SHAME_QUOTE: 'Shame_Quote',
     DONOR_QUOTE: 'Donor_Quote',
     QUOTE: 'Quote',
+    LOG: 'Log',
+    WORD: 'Word',
 };
 
 export const STATUSES = {

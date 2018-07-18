@@ -42,3 +42,9 @@ interface DirtyUser {
 interface Data {
     lastUpdated?: number
 }
+
+type Message = {
+    code: number
+    message?: string
+    status?: string
+}
