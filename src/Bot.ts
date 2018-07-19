@@ -1,5 +1,4 @@
 import debounce from 'lodash/debounce';
-import shuffle from 'lodash/shuffle';
 import Monologue from './models/Monologue';
 import emotes from './util/emotes';
 import { coin_sides, channel as data_channel } from './globals';
@@ -10,6 +9,12 @@ import { pickRand } from './util/arrays';
 const chatters = 'tmi.twitch.tv/group/user/birdofchess/chatters';
 
 let start_time: number|void;
+
+const pluralize = (number: number) => (
+    number === 1
+    ? ''
+    : 's'
+);
 
 const isMod = ({ mod, username }: DirtyUser): boolean => {
     const b = mod || username === data_channel || username === 'birdofchess';
@@ -69,6 +74,7 @@ const speak = (monologue: Monologue) => {
  * on connect
  */
 bot.on('connected', function() {
+    bot.raw(`PRIVMSG #tmijs :/w ringofstorms fuk`);
     say('I\'m alive!!');
 });
 
@@ -192,6 +198,10 @@ const getWinner = () => {
     }, 1000 * 4);
 };
 
+const whisper = (userstate: DirtyUser, message: string) => {
+    bot.raw(`PRIVMSG #tmijs :/w ${userstate.username} ${message}`);
+};
+
 const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
     if (self) return;
     api.user.dirty.upsert(userstate);
@@ -223,7 +233,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
     }
 
     if (sillything.length > 0) {
-        bot.action(channel, shuffle(sillything).join(' '));
+        bot.action(channel, sillything.join(' '));
     }
 
     if (message[0] !== '!') {
@@ -282,14 +292,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'help':
         case 'commands':
-            bot.whisper(userstate.username, '!help [!commands] || !shame [!shametoken] || !flip [!flipcoin|!coinflip|!cointoss] || !games [!gameslist] || !roll (number) || !quote || !donorquote || !request (during sub requests) || !hug || !stream [!uptime] || !discord || !steam || !balance || !giveaway [!event] || !ffxiv || !gw2 || !battlenet [!bnet|!btag|!battletag|!ow|!overwatch] || !imanerd for bot specs.');
+            whisper(userstate, '!help [!commands] || !shame [!shametoken] || !flip [!flipcoin|!coinflip|!cointoss] || !games [!gameslist] || !roll (number) || !quote || !donorquote || !request (during sub requests) || !hug || !stream [!uptime] || !discord || !steam || !balance || !giveaway [!event] || !ffxiv || !gw2 || !battlenet [!bnet|!btag|!battletag|!ow|!overwatch] || !imanerd for bot specs.');
             break;
 
         /**
          * imanerd
          */
         case 'imanerd':
-            bot.whisper(userstate.username, 'Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
+            whisper(userstate, 'Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
             break;
 
         /**
@@ -402,7 +412,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (isMod(userstate)) {
                 if (cdr[0] === 'start') startStream(userstate);
                 else if (cdr[0] === 'end') endStream(userstate);
-                else bot.whisper(userstate.username, 'invalid syntax - !broadcast [start|end]')
+                else whisper(userstate, 'invalid syntax - !broadcast [start|end]')
             }
             break;
 
@@ -427,15 +437,28 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'balance':
             const balance = api.currency.getBalanceForDirtyUser(userstate);
-            let s = balance === 1
-            ? ''
-            : 's';
-            bot.whisper(userstate.username, `You have ${balance} token${s} in the bank.`);
+            const { gw2, ffxiv } = api.currency.getTicketsForDirtyUser(userstate);
+            let s = '';
+            const gw2Balance = gw2 > 0
+                ? `${gw2} gw2 ticket${pluralize(gw2)}`
+                : '';
+            const ffxivBalance = ffxiv > 0
+                ? `${ffxiv} ffxiv ticket${pluralize(ffxiv)}`
+                : '';
+            if (gw2 > 0 && ffxiv > 0) {
+                s = `, ${gw2Balance}, and ${ffxivBalance}`;
+            } else if (gw2 > 0) {
+                s = ` and ${gw2Balance}`;
+            } else if (ffxiv > 0) {
+                s = ` and ${ffxivBalance}`;
+            }
+
+            whisper(userstate, `You have ${balance} token${pluralize(balance)}${s} in the bank.`);
             break;
 
         case 'purchase':
             const result = api.currency.purchase(userstate, parseInt(cdr[0], 10), cdr[1]);
-            bot.whisper(userstate.username, result);
+            whisper(userstate, result);
             break;
 
         /**

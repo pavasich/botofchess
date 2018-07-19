@@ -38,6 +38,10 @@ interface DirtyUser {
     'message-type': any
 }
 
+interface Store {
+    ffxiv: number
+    gw2: number
+}
 
 interface Data {
     lastUpdated?: number

@@ -2,11 +2,6 @@ import db, { MODELS } from '../../db';
 import { getBalanceForDirtyUser, decrementBalanceForDirtyUser } from './balance';
 import { sanitizeDirtyUser } from '../../models/User';
 
-interface Store {
-    ffxiv: number
-    gw2: number
-}
-
 const prices: Store = {
     ffxiv: 100,
     gw2: 100,

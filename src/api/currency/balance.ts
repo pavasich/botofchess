@@ -23,3 +23,15 @@ export const decrementBalanceForDirtyUser = (user: DirtyUser, amount: number) =>
         db.get(MODELS.CURRENCY).set(user.username, balance - amount).write();
     }
 };
+
+export const getTicketsForDirtyUser = (user: DirtyUser): Store => {
+    let wallet: Store = db.get(MODELS.TICKETS).get(user['user-id']).value();
+    if (wallet === undefined) {
+        wallet = {
+            ffxiv: 0,
+            gw2: 0,
+        };
+        db.get(MODELS.TICKETS).set(user['user-id'], wallet);
+    }
+    return wallet;
+};
