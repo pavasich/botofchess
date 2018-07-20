@@ -6,10 +6,10 @@
   "scripts": {
     "bot": "nodemon src/bot --exec babel-node --extensions \".ts,.js\"",
     "bot:dev": "npm run bot",
-    "bot:prod": "NODE_ENV=production npx babel src/bot --extensions \".ts,.js\" --out-dir dist/bot && NODE_ENV=production forever dist/bot",
-    "server": "npx babel src/server --extensions \".ts,.js\" --out-dir dist/server && cp src/server/index.html dist/server/index.html && nodemon dist/server",
+    "bot:prod": "rm -rf dist/ && NODE_ENV=production npx babel src --extensions \".ts,.js\" --out-dir dist && NODE_ENV=production forever dist/bot",
+    "server": "rm -rf dist/ && npx babel src --extensions \".ts,.js\" --out-dir dist && cp src/server/index.html dist/server/index.html && nodemon dist/server",
     "server:dev": "npm run server",
-    "server:prod": "NODE_ENV=production npx babel src/server --extensions \".ts,.js\" --out-dir dist/server && cp src/server/index.html dist/server/index.html && NODE_ENV=production forever dist/server"
+    "server:prod": "rm -rf dist/ && NODE_ENV=production npx babel src --extensions \".ts,.js\" --out-dir dist && cp src/server/index.html dist/server/index.html && NODE_ENV=production forever dist/server"
   },
   "author": "pavasich",
   "license": "ISC",
