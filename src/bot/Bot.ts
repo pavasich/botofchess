@@ -5,6 +5,10 @@ import { coin_sides, channel as data_channel } from './globals';
 import bot from './client';
 import api from '../api';
 import { pickRand } from '../util/arrays';
+import CommandLimiter from './CommandLimiter';
+import limits from './limits';
+
+const rateLimit = new CommandLimiter(limits);
 
 const chatters = 'tmi.twitch.tv/group/user/birdofchess/chatters';
 
@@ -20,12 +24,12 @@ const isMod = ({ mod, username }: DirtyUser): boolean => {
     const b = mod || username === data_channel || username === 'birdofchess';
     console.log(mod, username, '=', b);
     return b;
-}
+};
 
 let enableLogging = false;
-const logAction = (string: string) => {
+const logAction = (userstate: DirtyUser, string: string) => {
     if (enableLogging) {
-        api.log(`${string} - t = ${(new Date()).toJSON()}`);
+        api.log(`INFO::${userstate['display-name']}::${string}::${(new Date()).toJSON()}`);
     }
 };
 
@@ -74,7 +78,6 @@ const speak = (monologue: Monologue) => {
  * on connect
  */
 bot.on('connected', function() {
-    bot.raw(`PRIVMSG #tmijs :/w ringofstorms fuk`);
     say('I\'m alive!!');
 });
 
@@ -198,10 +201,6 @@ const getWinner = () => {
     }, 1000 * 4);
 };
 
-const whisper = (userstate: DirtyUser, message: string) => {
-    bot.raw(`PRIVMSG #tmijs :/w ${userstate.username} ${message}`);
-};
-
 const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
     if (self) return;
     api.user.dirty.upsert(userstate);
@@ -217,7 +216,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
     for (let i = 0, n = temp.length; i < n; i++) {
         if (emotes[temp[i]] === 1) {
             sillything[sillysize++] = temp[i];
-        } else if (temp[i] === 'ball') {
+        } else if (/ball/.test(temp[i].toLowerCase()) && Math.random() >= .5) {
             sillything[sillysize++] = 'ball';
         }
     }
@@ -232,20 +231,24 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         sillything[sillysize++] = ayy;
     }
 
-    if (sillything.length > 0) {
+    if (sillysize > 0) {
         bot.action(channel, sillything.join(' '));
     }
 
     if (message[0] !== '!') {
         return;
     }
-
     console.log('checking out a message', userstate, message);
     const tokens = message.replace('!', '').toLowerCase().split(' ');
     const car = tokens[0];
     const cdr = tokens.slice(1);
+    if (rateLimit.enforce(userstate, car)) {
+        if (enableLogging) {
+            logAction(userstate, `SKIPPED::${message}`);
+        }
+        return;
+    }
     let writeLog = true;
-
     switch (car) {
         /**
          * games
@@ -292,14 +295,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'help':
         case 'commands':
-            whisper(userstate, '!help [!commands] || !shame [!shametoken] || !flip [!flipcoin|!coinflip|!cointoss] || !games [!gameslist] || !roll (number) || !quote || !donorquote || !request (during sub requests) || !hug || !stream [!uptime] || !discord || !steam || !balance || !giveaway [!event] || !ffxiv || !gw2 || !battlenet [!bnet|!btag|!battletag|!ow|!overwatch] || !imanerd for bot specs.');
+            bot.action(channel, '!help [!commands] || !shame [!shametoken] || !flip [!flipcoin|!coinflip|!cointoss] || !games [!gameslist] || !roll (number) || !quote || !donorquote || !request (during sub requests) || !hug || !stream [!uptime] || !discord || !steam || !balance || !giveaway [!event] || !ffxiv || !gw2 || !battlenet [!bnet|!btag|!battletag|!ow|!overwatch] || !imanerd for bot specs.');
             break;
 
         /**
          * imanerd
          */
         case 'imanerd':
-            whisper(userstate, 'Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
+            bot.action(channel, 'Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
             break;
 
         /**
@@ -412,7 +415,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (isMod(userstate)) {
                 if (cdr[0] === 'start') startStream(userstate);
                 else if (cdr[0] === 'end') endStream(userstate);
-                else whisper(userstate, 'invalid syntax - !broadcast [start|end]')
+                else bot.action(channel, 'invalid syntax - !broadcast [start|end]')
             }
             break;
 
@@ -453,12 +456,12 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                 s = ` and ${ffxivBalance}`;
             }
 
-            whisper(userstate, `You have ${balance} token${pluralize(balance)}${s} in the bank.`);
+            bot.action(channel, `You have ${balance} token${pluralize(balance)}${s} in the bank.`);
             break;
 
         case 'purchase':
             const result = api.currency.purchase(userstate, parseInt(cdr[0], 10), cdr[1]);
-            whisper(userstate, result);
+            bot.action(channel, result);
             break;
 
         /**
@@ -497,7 +500,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             break;
     }
     if (writeLog && enableLogging) {
-        logAction(message);
+        logAction(userstate, message);
     }
 };
 
