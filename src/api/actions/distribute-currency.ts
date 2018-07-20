@@ -1,4 +1,4 @@
-import { channel } from '../../globals';
+import { channel } from '../../bot/globals';
 import db, { MODELS } from '../../db';
 
 const users = `https://tmi.twitch.tv/group/user/${channel}/chatters`;

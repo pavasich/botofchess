@@ -4,7 +4,7 @@ import exists from './exists';
 import db from '../../db';
 import isFresh from '../../db/is-fresh';
 import { STATUSES, MODELS } from '../../db/db-constants';
-import { channelId } from '../../globals';
+import { channelId } from '../../bot/globals';
 
 const verifyFollowerUrl = (userId: string|number) =>
     `https://api.twitch.tv/kraken/users/${userId}/follows/channels/${channelId}`;

@@ -1,5 +1,5 @@
 node_modules
-secrets*
+src/bot/secrets.ts
 .idea
 db.json
 dist

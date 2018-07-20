@@ -1,10 +1,10 @@
 import debounce from 'lodash/debounce';
-import Monologue from './models/Monologue';
-import emotes from './util/emotes';
+import Monologue from '../models/Monologue/index';
+import emotes from '../util/emotes';
 import { coin_sides, channel as data_channel } from './globals';
 import bot from './client';
-import api from './api';
-import { pickRand } from './util/arrays';
+import api from '../api';
+import { pickRand } from '../util/arrays';
 
 const chatters = 'tmi.twitch.tv/group/user/birdofchess/chatters';
 
