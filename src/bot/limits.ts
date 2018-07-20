@@ -1,4 +1,4 @@
-import { second, minute, hour } from '../util/time-expand';
+import { second, minute } from '../util/time-expand';
 
 const minute5 = minute(5);
 const minute1 = minute(1);
