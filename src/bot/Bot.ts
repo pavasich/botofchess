@@ -456,12 +456,12 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                 s = ` and ${ffxivBalance}`;
             }
 
-            bot.action(channel, `You have ${balance} token${pluralize(balance)}${s} in the bank.`);
+            bot.action(channel, `@${userstate['display-name']}: You have ${balance} token${pluralize(balance)}${s} in the bank.`);
             break;
 
         case 'purchase':
             const result = api.currency.purchase(userstate, parseInt(cdr[0], 10), cdr[1]);
-            bot.action(channel, result);
+            bot.action(channel, `@${userstate['display-name']}: ${result}`);
             break;
 
         /**
