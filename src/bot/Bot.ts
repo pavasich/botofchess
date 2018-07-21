@@ -390,10 +390,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
 
         case 'subscribers':
             if (isMod(userstate)) {
-                if (cdr[0] === 'on') {
+                if (cdr[0] === 'on' && subsonly !== true) {
                     subsonly = true;
-                } else if (cdr[0] === 'off') {
+                    bot.say(channel, 'subs only, activate!');
+                } else if (cdr[0] === 'off' && subsonly !== false) {
+                    bot.say(channel, 'subs only, deactivate!')
                     subsonly = false;
+                } else {
+                    bot.say(channel, `subs only=${subsonly}`)
                 }
             }
             break;
