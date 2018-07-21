@@ -29,9 +29,9 @@ const startStream = (userstate: DirtyUser) => {
         start_time = Date.now();
         interval = setInterval(() => {
             api.actions.distributeCurrency(subsonly);
-            bot.action('Tokens have been distributed! (+20)');
-        }, minute20)
-        bot.action('Hamlo >D');
+            bot.action(data_channel, 'Tokens have been distributed! (+20)');
+        }, minute20);
+        bot.action(data_channel, 'Hamlo >D');
     }
 };
 
@@ -40,7 +40,7 @@ const endStream = (userstate: DirtyUser) => {
         broadcasting = false;
         start_time = undefined;
         clearInterval(interval);
-        bot.action('Gooooooooooooobie!');
+        bot.action(data_channel, 'Gooooooooooooobie!');
     }
 };
 
@@ -246,7 +246,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'stream':
         case 'uptime':
-            bot.action(actions.uptime(start_time));
+            bot.action(channel, actions.uptime(start_time));
             break;
 
         /**
@@ -400,10 +400,10 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
 
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
-                bot.action('ok!');
+                bot.action(channel, 'ok!');
                 api.actions.distributeCurrency(subsonly);
             } else {
-                bot.action('lol nty');
+                bot.action(channel, 'lol nty');
             }
             break;
         default:
