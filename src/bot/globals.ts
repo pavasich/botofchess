@@ -1,7 +1,7 @@
 import { password } from './secrets';
 
 export const channel: string = 'birdofchess';
-export const channelId: number = 142204178;
+export const channel_id: number = 142204178;
 
 export const options: object = {
   options: {

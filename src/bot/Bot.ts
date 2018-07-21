@@ -7,23 +7,41 @@ import api from '../api';
 import { pickRand } from '../util/arrays';
 import CommandLimiter from './CommandLimiter';
 import limits from './limits';
+import actions from './actions';
+import { isMod } from './util';
+import { minute, second } from "../util/time-expand";
+
+const second1 = second(1);
+const second2 = second1 * 2;
+const second4 = second2 * 2;
+const second30 = second(30);
+const minute20 = minute(20);
 
 const rateLimit = new CommandLimiter(limits);
-
-const chatters = 'tmi.twitch.tv/group/user/birdofchess/chatters';
-
 let start_time: number|void;
+let broadcasting = false;
+let interval: Timer;
+let subsonly = false;
 
-const pluralize = (number: number) => (
-    number === 1
-    ? ''
-    : 's'
-);
+const startStream = (userstate: DirtyUser) => {
+    if (isMod(userstate)) {
+        broadcasting = true;
+        start_time = Date.now();
+        interval = setInterval(() => {
+            api.actions.distributeCurrency(subsonly);
+            bot.action('Tokens have been distributed! (+20)');
+        }, minute20)
+        bot.action('Hamlo >D');
+    }
+};
 
-const isMod = ({ mod, username }: DirtyUser): boolean => {
-    const b = mod || username === data_channel || username === 'birdofchess';
-    console.log(mod, username, '=', b);
-    return b;
+const endStream = (userstate: DirtyUser) => {
+    if (isMod(userstate)) {
+        broadcasting = false;
+        start_time = undefined;
+        clearInterval(interval);
+        bot.action('Gooooooooooooobie!');
+    }
 };
 
 let enableLogging = false;
@@ -37,8 +55,7 @@ const logAction = (userstate: DirtyUser, string: string) => {
  *   S E T U P
  */
 console.log('running!');
-let broadcasting = false;
-const say_bounced = debounce((s) => { bot.action(data_channel, s) }, 2000);
+const say_bounced = debounce((s) => { bot.action(data_channel, s) }, second2);
 
 /**
  * say
@@ -110,86 +127,7 @@ const flipCoin = (name: string) => {
     const result = pickRand(coin_sides);
     setTimeout(() => {
         bot.action(data_channel, `   ${result} !`);
-    }, 1500);
-};
-
-/**
- * stream [uptime]
- */
-const uptime = () => {
-    if (start_time === undefined) {
-        say('Stream is offline, try again later >D');
-        return;
-    }
-    const now: number = Date.now();
-    let running = (now - start_time);
-    running = Math.floor(running / 1000);
-    const hours = Math.floor(running / (60 * 60));
-    running %= (60 * 60);
-    const minutes = Math.floor(running / (60));
-    const seconds = running % 60;
-
-    const t = [];
-
-    if (hours > 0) {
-        if (hours > 1) {
-            t.push(`${hours} hours`);
-        } else {
-            t.push('1 hour');
-        }
-    }
-
-    if (minutes > 0) {
-        if (minutes > 1) {
-            t.push(`${minutes} minutes`);
-        } else {
-            t.push('1 minute');
-        }
-    }
-
-    if (seconds > 0) {
-        if (seconds > 1) {
-            t.push(`${seconds} seconds`);
-        } else {
-            t.push('1 second');
-        }
-    }
-
-    let s;
-    if (t.length === 1) {
-        s = t[0];
-    } else if (t.length === 2) {
-        s = `${t[0]} and ${t[1]}`;
-    } else {
-        s = `${t[0]}, ${t[1]}, and ${t[2]}`;
-    }
-
-
-    say(`birdofchess has been streaming for ${s}.`);
-};
-
-let interval: Timer;
-const startStream = (userstate: DirtyUser) => {
-    if (isMod(userstate)) {
-        broadcasting = true;
-        start_time = Date.now();
-        interval = setInterval(() => {
-            if (broadcasting) {
-                api.actions.distributeCurrency();
-                bot.action(data_channel, 'Shame tokens have been deposited! (+20)');
-            }
-        }, 1000 * 60 * 20);
-        bot.action(data_channel, 'Here goes!');
-    }
-};
-
-const endStream = (userstate: DirtyUser) => {
-    if (isMod(userstate)) {
-        broadcasting = false;
-        start_time = undefined;
-        clearInterval(interval);
-        bot.action(data_channel, 'Gooooooooooobie!');
-    }
+    }, second1);
 };
 
 const getWinner = () => {
@@ -198,7 +136,7 @@ const getWinner = () => {
     setTimeout(() => {
         dangerSay(`${result[0]}, requesting ${result[1]}!`);
         dangerSay('Okay?');
-    }, 1000 * 4);
+    }, second4);
 };
 
 const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
@@ -239,9 +177,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         return;
     }
     console.log('checking out a message', userstate, message);
-    const tokens = message.replace('!', '').toLowerCase().split(' ');
-    const car = tokens[0];
-    const cdr = tokens.slice(1);
+    const [car, ...cdr] = message.replace('!', '').toLowerCase().split(' ');
     if (rateLimit.enforce(userstate, car)) {
         if (enableLogging) {
             logAction(userstate, `SKIPPED::${message}`);
@@ -310,7 +246,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'stream':
         case 'uptime':
-            uptime();
+            bot.action(actions.uptime(start_time));
             break;
 
         /**
@@ -341,7 +277,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             setTimeout(() => {
                 dangerSay('Times up! The winner is...');
                 getWinner();
-            }, 1000 * 30);
+            }, second30);
             break;
 
         /**
@@ -366,36 +302,8 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          * hug
          */
         case 'hug':
-            if (tokens[1] && tokens[1] !== 'undefined') {
-                try {
-                    const name1 = userstate.username.replace('@', '').toLowerCase();
-                    const name2 = tokens[1].replace('@', '').toLowerCase();
-
-                    if (name1 === name2) {
-                        bot.action(channel, `@${name1} is wrapped up in a self-hug. Weird.`);
-                    } else if (name2 === 'botofchess') {
-                        bot.action(channel, `@${name1} hugged me! *blush*`);
-                    } else {
-                        try {
-                            const response = await fetch(chatters, { method: 'GET' });
-                            if (response.ok) {
-                                const {chatters: {moderators, viewers}} = await response.json();
-                                if (moderators.includes(name2) || viewers.includes(name2)) {
-                                    bot.action(channel, `@${name1} hugs @${name2}   :3`);
-                                    break;
-                                }
-                                bot.action(channel, `@${name1} hugs ${name2}.`);
-                            }
-                        } catch (e) {
-                            console.log('api error:', e);
-                            bot.action(channel, `@${name1} hugs ${name2}.`);
-                        }
-                    }
-                } catch (e) {
-                    say('What are you trying to do to me?!');
-                    console.log(e);
-                }
-            }
+            const result = await actions.hug(userstate, cdr[0]);
+            bot.action(channel, result);
             break;
 
         /**
@@ -415,7 +323,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (isMod(userstate)) {
                 if (cdr[0] === 'start') startStream(userstate);
                 else if (cdr[0] === 'end') endStream(userstate);
-                else bot.action(channel, 'invalid syntax - !broadcast [start|end]')
+                else bot.action(channel, 'invalid syntax - !broadcast [start|end]');
             }
             break;
 
@@ -439,29 +347,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          * balance
          */
         case 'balance':
-            const balance = api.currency.getBalanceForDirtyUser(userstate);
-            const { gw2, ffxiv } = api.currency.getTicketsForDirtyUser(userstate);
-            let s = '';
-            const gw2Balance = gw2 > 0
-                ? `${gw2} gw2 ticket${pluralize(gw2)}`
-                : '';
-            const ffxivBalance = ffxiv > 0
-                ? `${ffxiv} ffxiv ticket${pluralize(ffxiv)}`
-                : '';
-            if (gw2 > 0 && ffxiv > 0) {
-                s = `, ${gw2Balance}, and ${ffxivBalance}`;
-            } else if (gw2 > 0) {
-                s = ` and ${gw2Balance}`;
-            } else if (ffxiv > 0) {
-                s = ` and ${ffxivBalance}`;
-            }
-
-            bot.action(channel, `@${userstate['display-name']}: You have ${balance} token${pluralize(balance)}${s} in the bank.`);
+            bot.action(channel, actions.balance(userstate));
             break;
 
         case 'purchase':
-            const result = api.currency.purchase(userstate, parseInt(cdr[0], 10), cdr[1]);
-            bot.action(channel, `@${userstate['display-name']}: ${result}`);
+            const response = actions.purchase(userstate, cdr[0], cdr[1]);
+            if (response !== undefined) {
+                bot.action(channel, response);
+            }
             break;
 
         /**
@@ -495,6 +388,24 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             say("[Rook#11953 :: Main], [Rook#11992 :: Alternate]");
             break;
 
+        case 'subscribers':
+            if (isMod(userstate)) {
+                if (cdr[0] === 'on') {
+                    subsonly = true;
+                } else if (cdr[0] === 'off') {
+                    subsonly = false;
+                }
+            }
+            break;
+
+        case 'givememoney':
+            if (userstate.username === 'bebop_bebop') {
+                bot.action('ok!');
+                api.actions.distributeCurrency(subsonly);
+            } else {
+                bot.action('lol nty');
+            }
+            break;
         default:
             writeLog = false;
             break;

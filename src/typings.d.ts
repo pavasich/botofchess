@@ -52,3 +52,28 @@ type Message = {
     message?: string
     status?: string
 }
+
+
+interface TwitchSubscribersSubscriberUser {
+    _id: string
+    bio: string
+    created_at: string
+    display_name: string
+    logo: string
+    name: string
+    type: string
+    updated_at: string
+}
+
+interface TwitchSubscribersSubscriber {
+    _id: string
+    created_at: string
+    sub_plan: string
+    sub_plan_name: string
+    user: TwitchSubscribersSubscriberUser
+}
+
+interface TwitchSubscribersResponse {
+    _total: number,
+    subscribers: Array<TwitchSubscribersSubscriber>
+}
