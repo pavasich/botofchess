@@ -35,6 +35,7 @@ export default {
     event: minute5,
     giveaway: minute5,
     balance: minute5,
+    spicybalance: 0,
     purchase: 0,
     enablelogging: 0,
     disableLogging: 0,

@@ -7,3 +7,11 @@ export const sanitizeDirtyUser = (dirtyUser: DirtyUser): User => {
         moderator: mod,
     };
 };
+
+export const searchEveryoneForUser = (name: string, everyone: Array<User>): User|void => {
+    for (let i = 0, n = everyone.length; i < n; i++) {
+        if (everyone[i].name === name) {
+            return everyone[i];
+        }
+    }
+};

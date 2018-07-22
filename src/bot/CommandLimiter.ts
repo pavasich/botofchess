@@ -22,6 +22,7 @@ export default class CommandLimiter {
             history[command] = now;
             return false;
         }
+        if (this.timeouts[command] === undefined) return false;
         if ((now - history[command]) > this.timeouts[command]) {
             history[command] = now;
             return false;

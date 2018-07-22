@@ -15,6 +15,7 @@ const second1 = second(1);
 const second2 = second1 * 2;
 const second4 = second2 * 2;
 const second30 = second(30);
+const minute5 = minute(5);
 const minute20 = minute(20);
 
 const rateLimit = new CommandLimiter(limits);
@@ -22,13 +23,28 @@ let start_time: number|void;
 let broadcasting = false;
 let interval: Timer;
 let subsonly = false;
+let chatters: Array<string>;
+
+const fetchChatters = async () => {
+    console.log('fetching chatters...');
+    const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, {method: 'GET'});
+    if (response.ok) {
+        const { chatters: { moderators, viewers } } = await response.json();
+        chatters = [...viewers, ...moderators];
+        console.log('got chatters:', chatters);
+    }
+}
+
+fetchChatters();
+
+setInterval(fetchChatters, minute5);
 
 const startStream = (userstate: DirtyUser) => {
     if (isMod(userstate)) {
         broadcasting = true;
         start_time = Date.now();
         interval = setInterval(() => {
-            api.actions.distributeCurrency(subsonly);
+            api.actions.distributeCurrency(chatters, subsonly);
             bot.action(data_channel, 'Tokens have been distributed! (+20)');
         }, minute20);
         bot.action(data_channel, 'Hamlo >D');
@@ -347,6 +363,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          * balance
          */
         case 'balance':
+        case 'spicybalance':
             bot.action(channel, actions.balance(userstate));
             break;
 
@@ -404,8 +421,9 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
 
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
+                console.log('ok');
+                await api.actions.distributeCurrency(chatters, subsonly);
                 bot.action(channel, 'ok!');
-                api.actions.distributeCurrency(subsonly);
             } else {
                 bot.action(channel, 'lol nty');
             }
