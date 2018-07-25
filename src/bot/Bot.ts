@@ -10,6 +10,7 @@ import limits from './limits';
 import actions from './actions';
 import { isMod } from './util';
 import { minute, second } from "../util/time-expand";
+import raffle from '../api/currency/raffle';
 
 const second1 = second(1);
 const second2 = second1 * 2;
@@ -43,10 +44,11 @@ const startStream = (userstate: DirtyUser) => {
     if (isMod(userstate)) {
         broadcasting = true;
         start_time = Date.now();
-        interval = setInterval(() => {
-            api.actions.distributeCurrency(chatters, subsonly);
-            bot.action(data_channel, 'Tokens have been distributed! (+20)');
-        }, minute20);
+        interval = null;
+        // setInterval(() => {
+        //     api.actions.distributeCurrency(chatters, subsonly);
+        //     bot.action(data_channel, 'Tokens have been distributed! (+20)');
+        // }, minute20);
         bot.action(data_channel, 'Hamlo >D');
     }
 };
@@ -428,6 +430,13 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                 bot.action(channel, 'lol nty');
             }
             break;
+
+        case 'raffle':
+            if (isMod(userstate)) {
+                raffle();
+            }
+            break;
+
         default:
             writeLog = false;
             break;
