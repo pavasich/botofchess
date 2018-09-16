@@ -15,14 +15,14 @@ import raffle from '../api/currency/raffle';
 const second1 = second(1);
 const second2 = second1 * 2;
 const second4 = second2 * 2;
-const second30 = second(30);
+const second30 = second1 * 30;
 const minute5 = minute(5);
 const minute20 = minute(20);
 
 const rateLimit = new CommandLimiter(limits);
 let start_time: number|void;
 let broadcasting = false;
-let interval: Timer;
+let interval: NodeJS.Timer|null;
 let subsonly = false;
 let chatters: Array<string>;
 
@@ -57,7 +57,7 @@ const endStream = (userstate: DirtyUser) => {
     if (isMod(userstate)) {
         broadcasting = false;
         start_time = undefined;
-        clearInterval(interval);
+        if (interval !== null) clearInterval(interval);
         bot.action(data_channel, 'Gooooooooooooobie!');
     }
 };
@@ -372,19 +372,24 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'raffle':
             if (isMod(userstate) && usernameSet === undefined) {
                 usernameSet = new Set();
+                bot.action(channel, 'Giveaway starts now! Talk in chat to enter the raffle.');
                 setTimeout(() => {
                     if (usernameSet !== undefined) {
                         const names = [...usernameSet];
                         const i = parseInt(`${names.length * Math.random()}`, 10);
-                        say('The winner is.........');
-                        say(`${names[i]}!`);
-                        bot.action(channel, 'Congratulations!');
+                        bot.action(channel, 'The winner is.........');
+                        setTimeout(() => {
+                            bot.action(channel, `${names[i]}!`);
+                            bot.action(channel, 'Congratulations!');
+                        }, second1);
+
                         usernameSet = undefined;
                     } else {
                         say('Get bebop, something went wrong :c');
                     }
                 }, second30);
             }
+            break;
 
         /**
          * balance
