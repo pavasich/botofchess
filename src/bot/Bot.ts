@@ -157,12 +157,18 @@ const getWinner = () => {
     }, second4);
 };
 
+let usernameSet: Set<string> | undefined;
+
 const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
     if (self) return;
     api.user.dirty.upsert(userstate);
 
     if (enableLogging) {
         api.word.saveWords(userstate, message);
+    }
+
+    if (usernameSet !== undefined) {
+        usernameSet.add(userstate.username);
     }
 
     let sillything = [];
@@ -196,11 +202,13 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
     }
     console.log('checking out a message', userstate, message);
     const [car, ...cdr] = message.replace('!', '').toLowerCase().split(' ');
-    if (rateLimit.enforce(userstate, car)) {
-        if (enableLogging) {
-            logAction(userstate, `SKIPPED::${message}`);
+    if (limits[car] !== undefined) {
+        if (rateLimit.enforce(userstate, car)) {
+            if (enableLogging) {
+                logAction(userstate, `SKIPPED::${message}`);
+            }
+            return;
         }
-        return;
     }
     let writeLog = true;
     switch (car) {
@@ -298,14 +306,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }, second30);
             break;
 
-        /**
-         * tryagain
-         */
-        case 'tryagain':
-            if (isMod(userstate)) {
-                getWinner();
-            }
-            break;
+        // /**
+        //  * tryagain
+        //  */
+        // case 'tryagain':
+        //     if (isMod(userstate)) {
+        //         getWinner();
+        //     }
+        //     break;
 
         /**
          * request
@@ -358,8 +366,25 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'event':
         case 'giveaway':
-            say(`It's the beach birds giveaway! Hang out, earn tokens while in chat, and exchange them for raffle tickets!  Prizes and details at: http://bit.ly/beach-birds #beach-birds`);
+            say(`It's the Hydaelyn International FFXIV 5th anniversary celebration! Hang out, put on your nostalgia glasses, watch some raiding, and enter raffles to win Mog Station prizes!`);
             break;
+
+        case 'raffle':
+            if (isMod(userstate) && usernameSet === undefined) {
+                usernameSet = new Set();
+                setTimeout(() => {
+                    if (usernameSet !== undefined) {
+                        const names = [...usernameSet];
+                        const i = parseInt(`${names.length * Math.random()}`, 10);
+                        say('The winner is.........');
+                        say(`${names[i]}!`);
+                        bot.action(channel, 'Congratulations!');
+                        usernameSet = undefined;
+                    } else {
+                        say('Get bebop, something went wrong :c');
+                    }
+                }, second30);
+            }
 
         /**
          * balance
@@ -431,11 +456,11 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        case 'raffle':
-            if (isMod(userstate)) {
-                raffle();
-            }
-            break;
+        // case 'raffle':
+        //     if (isMod(userstate)) {
+        //         raffle();
+        //     }
+        //     break;
 
         default:
             writeLog = false;
