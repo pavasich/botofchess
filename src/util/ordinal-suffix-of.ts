@@ -1,8 +1,15 @@
-export default function ordinal(n: number) {
+export default function ordinalSuffixOf(n: number) {
     if (n === undefined) return n;
-    if (n === 1) return '1st';
-    if (n === 2) return '2nd'
-    const s = `${n}`;
-    const last = s[s.length - 1];
-    if (n > 1 && last === '1')
+    const tens = n % 10;
+    const hundreds = n % 100;
+    if (tens == 1 && hundreds != 11) {
+        return 'st';
+    }
+    if (tens == 2 && hundreds != 12) {
+        return 'nd';
+    }
+    if (tens == 3 && hundreds != 13) {
+        return 'rd';
+    }
+    return 'th';
 }

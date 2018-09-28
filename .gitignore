@@ -3,3 +3,7 @@ src/bot/secrets.ts
 .idea
 db.json
 dist
+src/bird-of-bytes/secrets.ts
+.DS_Store
+build
+*.zip

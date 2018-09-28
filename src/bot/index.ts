@@ -1,7 +1,4 @@
 import 'isomorphic-fetch';
 
-import bot from './Bot';
-
-bot.connect();
-
+export { default as bot } from './Bot';
 

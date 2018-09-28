@@ -9,7 +9,7 @@ import CommandLimiter from './CommandLimiter';
 import limits from './limits';
 import actions from './actions';
 import { isMod } from './util';
-import { minute, second } from "../util/time-expand";
+import { minute, second } from '../util/time-expand';
 import raffle from '../api/currency/raffle';
 
 const second1 = second(1);
@@ -26,9 +26,9 @@ let interval: NodeJS.Timer|null;
 let subsonly = false;
 let chatters: Array<string>;
 
-const fetchChatters = async () => {
+async function fetchChatters() {
     console.log('fetching chatters...');
-    const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, {method: 'GET'});
+    const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, { method: 'GET' });
     if (response.ok) {
         const { chatters: { moderators, viewers } } = await response.json();
         chatters = [...viewers, ...moderators];
@@ -365,46 +365,46 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          * event|giveaway
          */
         case 'event':
-        case 'giveaway':
-            say(`It's the Hydaelyn International FFXIV 5th anniversary celebration! Hang out, put on your nostalgia glasses, watch some raiding, and enter raffles to win Mog Station prizes!`);
+        // case 'giveaway':
+            say(`http://bit.ly/birdathon-about`);
             break;
 
-        case 'raffle':
-            if (isMod(userstate) && usernameSet === undefined) {
-                usernameSet = new Set();
-                bot.action(channel, 'Giveaway starts now! Talk in chat to enter the raffle.');
-                setTimeout(() => {
-                    if (usernameSet !== undefined) {
-                        const names = [...usernameSet];
-                        const i = parseInt(`${names.length * Math.random()}`, 10);
-                        bot.action(channel, 'The winner is.........');
-                        setTimeout(() => {
-                            bot.action(channel, `${names[i]}!`);
-                            bot.action(channel, 'Congratulations!');
-                        }, second1);
-
-                        usernameSet = undefined;
-                    } else {
-                        say('Get bebop, something went wrong :c');
-                    }
-                }, second30);
-            }
-            break;
+        // case 'raffle':
+        //     if (isMod(userstate) && usernameSet === undefined) {
+        //         usernameSet = new Set();
+        //         bot.action(channel, 'Giveaway starts now! Talk in chat to enter the raffle.');
+        //         setTimeout(() => {
+        //             if (usernameSet !== undefined) {
+        //                 const names = [...usernameSet];
+        //                 const i = parseInt(`${names.length * Math.random()}`, 10);
+        //                 bot.action(channel, 'The winner is.........');
+        //                 setTimeout(() => {
+        //                     bot.action(channel, `${names[i]}!`);
+        //                     bot.action(channel, 'Congratulations!');
+        //                 }, second1);
+        //
+        //                 usernameSet = undefined;
+        //             } else {
+        //                 say('Get bebop, something went wrong :c');
+        //             }
+        //         }, second30);
+        //     }
+        //     break;
 
         /**
          * balance
          */
-        case 'balance':
-        case 'spicybalance':
-            bot.action(channel, actions.balance(userstate));
-            break;
-
-        case 'purchase':
-            const response = actions.purchase(userstate, cdr[0], cdr[1]);
-            if (response !== undefined) {
-                bot.action(channel, response);
-            }
-            break;
+        // case 'balance':
+        // case 'spicybalance':
+        //     bot.action(channel, actions.balance(userstate));
+        //     break;
+        //
+        // case 'purchase':
+        //     const response = actions.purchase(userstate, cdr[0], cdr[1]);
+        //     if (response !== undefined) {
+        //         bot.action(channel, response);
+        //     }
+        //     break;
 
         /**
          * enable logging - disabled by default
@@ -451,15 +451,15 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        case 'givememoney':
-            if (userstate.username === 'bebop_bebop') {
-                console.log('ok');
-                await api.actions.distributeCurrency(chatters, subsonly);
-                bot.action(channel, 'ok!');
-            } else {
-                bot.action(channel, 'lol nty');
-            }
-            break;
+        // case 'givememoney':
+        //     if (userstate.username === 'bebop_bebop') {
+        //         console.log('ok');
+        //         await api.actions.distributeCurrency(chatters, subsonly);
+        //         bot.action(channel, 'ok!');
+        //     } else {
+        //         bot.action(channel, 'lol nty');
+        //     }
+        //     break;
 
         // case 'raffle':
         //     if (isMod(userstate)) {
