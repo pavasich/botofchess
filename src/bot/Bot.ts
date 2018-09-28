@@ -482,4 +482,6 @@ bot.on('disconnected', function() {
     process.exit(0);
 });
 
+bot.connect();
+
 export default bot;
