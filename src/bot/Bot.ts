@@ -41,11 +41,11 @@ fetchChatters();
 
 setInterval(fetchChatters, minute5);
 
-const startStream = (userstate: DirtyUser) => {
+const startStream = (userstate: DirtyUser, channel: string) => {
     if (isMod(userstate)) {
         broadcasting = true;
         start_time = Date.now();
-        interval = null;
+        interval = setInterval(run_event(channel), minute(10));
         // setInterval(() => {
         //     api.actions.distributeCurrency(chatters, subsonly);
         //     bot.action(data_channel, 'Tokens have been distributed! (+20)');
@@ -160,7 +160,7 @@ const getWinner = () => {
 
 let tricking = false;
 
-const run_event = (channel: string) => {
+const run_event = (channel: string) => () => {
     if (broadcasting) {
         tricking = true;
         bot.action(channel, 'hears you knocking.');
@@ -369,16 +369,15 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (isMod(userstate)) {
                 if (cdr[0] === 'start') {
                     if (!broadcasting) {
-                        startStream(userstate);
-                        interval = setInterval(run_event(channel), minute(10));
+                        startStream(userstate, channel);
                     } else {
-                        bot.action(channel, 'We\'re already broadcasting, dummy');
+                        bot.action(channel, 'We\'re already broadcasting, silly');
                     }
                 } else if (cdr[0] === 'end') {
                     if (broadcasting) {
                         endStream(userstate);
                     } else {
-                        bot.action(channel, 'We aren\'t streaming, dummy');
+                        bot.action(channel, 'We aren\'t streaming, silly');
                     }
                 } else {
                     bot.action(channel, 'invalid syntax - !broadcast [start|end]');
