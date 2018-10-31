@@ -11,6 +11,7 @@ import actions from './actions';
 import { isMod } from './util';
 import { minute, second } from '../util/time-expand';
 import raffle from '../api/currency/raffle';
+import {trick_or_treat} from "../api/events/halloween";
 
 const second1 = second(1);
 const second2 = second1 * 2;
@@ -26,7 +27,7 @@ let interval: NodeJS.Timer|null;
 let subsonly = false;
 let chatters: Array<string>;
 
-async function fetchChatters() {
+export async function fetchChatters() {
     console.log('fetching chatters...');
     const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, { method: 'GET' });
     if (response.ok) {
@@ -157,11 +158,30 @@ const getWinner = () => {
     }, second4);
 };
 
+let tricking = false;
+
+const run_event = (channel: string) => {
+    if (broadcasting) {
+        tricking = true;
+        bot.action(channel, 'hears you knocking.');
+        bot.action(channel, 'Hello! What have we here! (talk in chat in the next 30 seconds to be eligible for a trick)');
+        setTimeout(() => {
+            speak(api.events.halloween.trick_or_treat());
+            api.events.halloween.clear();
+            tricking = false;
+        }, second30);
+    }
+};
+
 let usernameSet: Set<string> | undefined;
 
 const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
     if (self) return;
     api.user.dirty.upsert(userstate);
+
+    if (broadcasting && tricking) {
+        api.events.halloween.handleMessage(userstate);
+    }
 
     if (enableLogging) {
         api.word.saveWords(userstate, message);
@@ -347,18 +367,23 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'broadcast':
             if (isMod(userstate)) {
-                if (cdr[0] === 'start') startStream(userstate);
-                else if (cdr[0] === 'end') endStream(userstate);
-                else bot.action(channel, 'invalid syntax - !broadcast [start|end]');
+                if (cdr[0] === 'start') {
+                    if (!broadcasting) {
+                        startStream(userstate);
+                        interval = setInterval(run_event(channel), minute(10));
+                    } else {
+                        bot.action(channel, 'We\'re already broadcasting, dummy');
+                    }
+                } else if (cdr[0] === 'end') {
+                    if (broadcasting) {
+                        endStream(userstate);
+                    } else {
+                        bot.action(channel, 'We aren\'t streaming, dummy');
+                    }
+                } else {
+                    bot.action(channel, 'invalid syntax - !broadcast [start|end]');
+                }
             }
-            break;
-
-        case 'startstream':
-            startStream(userstate);
-            break;
-
-        case 'endstream':
-            endStream(userstate);
             break;
 
         /**
@@ -475,6 +500,8 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         logAction(userstate, message);
     }
 };
+
+
 
 bot.on('chat', commands);
 
