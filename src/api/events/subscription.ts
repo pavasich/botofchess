@@ -1,5 +1,3 @@
-import ordinalSuffixOf from '../../util/ordinal-suffix-of';
-
 export default function subscriptionHandler(client: any, hooks?: any[]) {
     return function handleSubscription(
         channel: string,

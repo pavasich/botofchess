@@ -10,8 +10,6 @@ import limits from './limits';
 import actions from './actions';
 import { isMod } from './util';
 import { minute, second } from '../util/time-expand';
-import raffle from '../api/currency/raffle';
-import {trick_or_treat} from "../api/events/halloween";
 
 const second1 = second(1);
 const second2 = second1 * 2;
@@ -45,11 +43,10 @@ const startStream = (userstate: DirtyUser, channel: string) => {
     if (isMod(userstate)) {
         broadcasting = true;
         start_time = Date.now();
-        interval = setInterval(run_event(channel), minute(10));
-        // setInterval(() => {
-        //     api.actions.distributeCurrency(chatters, subsonly);
-        //     bot.action(data_channel, 'Tokens have been distributed! (+20)');
-        // }, minute20);
+        setInterval(() => {
+            api.actions.distributeCurrency(chatters, subsonly);
+            bot.action(data_channel, 'Tokens have been distributed! (+20)');
+        }, minute20);
         bot.action(data_channel, 'Hamlo >D');
     }
 };
@@ -160,18 +157,6 @@ const getWinner = () => {
 
 let tricking = false;
 
-const run_event = (channel: string) => () => {
-    if (broadcasting) {
-        tricking = true;
-        bot.action(channel, 'hears you knocking.');
-        bot.action(channel, 'Hello! What have we here! (talk in chat in the next 30 seconds to be eligible for a trick)');
-        setTimeout(() => {
-            speak(api.events.halloween.trick_or_treat());
-            api.events.halloween.clear();
-            tricking = false;
-        }, second30);
-    }
-};
 
 let usernameSet: Set<string> | undefined;
 
@@ -389,8 +374,8 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          * event|giveaway
          */
         case 'event':
-        // case 'giveaway':
-            say(`http://bit.ly/birdathon-about`);
+        case 'giveaway':
+            say(`From November 26th - 30th, it's the Birdsgiving giveaway! Details here: http://bit.ly/birdsgiving`);
             break;
 
         // case 'raffle':
@@ -418,10 +403,10 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         /**
          * balance
          */
-        // case 'balance':
-        // case 'spicybalance':
-        //     bot.action(channel, actions.balance(userstate));
-        //     break;
+        case 'balance':
+        case 'spicybalance':
+            bot.action(channel, actions.balance(userstate));
+            break;
         //
         // case 'purchase':
         //     const response = actions.purchase(userstate, cdr[0], cdr[1]);
@@ -467,7 +452,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                     subsonly = true;
                     bot.say(channel, 'subs only, activate!');
                 } else if (cdr[0] === 'off' && subsonly !== false) {
-                    bot.say(channel, 'subs only, deactivate!')
+                    bot.say(channel, 'subs only, deactivate!');
                     subsonly = false;
                 } else {
                     bot.say(channel, `subs only=${subsonly}`)
@@ -475,15 +460,15 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        // case 'givememoney':
-        //     if (userstate.username === 'bebop_bebop') {
-        //         console.log('ok');
-        //         await api.actions.distributeCurrency(chatters, subsonly);
-        //         bot.action(channel, 'ok!');
-        //     } else {
-        //         bot.action(channel, 'lol nty');
-        //     }
-        //     break;
+        case 'givememoney':
+            if (userstate.username === 'bebop_bebop') {
+                console.log('ok');
+                await api.actions.distributeCurrency(chatters, subsonly);
+                bot.action(channel, 'ok!');
+            } else {
+                bot.action(channel, 'lol nty');
+            }
+            break;
 
         // case 'raffle':
         //     if (isMod(userstate)) {
