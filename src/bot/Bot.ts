@@ -21,7 +21,8 @@ const minute20 = minute(20);
 const rateLimit = new CommandLimiter(limits);
 let start_time: number|void;
 let broadcasting = false;
-let interval: NodeJS.Timer|null;
+let chatterInterval: NodeJS.Timer|null;
+let eventInterval: NodeJS.Timer|null;
 let subsonly = false;
 let chatters: Array<string>;
 
@@ -34,16 +35,16 @@ export async function fetchChatters() {
         console.log('got chatters:', chatters);
     }
 }
-
 fetchChatters();
+chatterInterval = setInterval(fetchChatters, minute5);
 
-setInterval(fetchChatters, minute5);
 
 const startStream = (userstate: DirtyUser, channel: string) => {
     if (isMod(userstate)) {
+        chatterInterval = setInterval(fetchChatters, minute5);
         broadcasting = true;
         start_time = Date.now();
-        setInterval(() => {
+        eventInterval = setInterval(() => {
             api.actions.distributeCurrency(chatters, subsonly);
             bot.action(data_channel, 'Tokens have been distributed! (+20)');
         }, minute20);
@@ -53,9 +54,11 @@ const startStream = (userstate: DirtyUser, channel: string) => {
 
 const endStream = (userstate: DirtyUser) => {
     if (isMod(userstate)) {
+        clearInterval()
         broadcasting = false;
         start_time = undefined;
-        if (interval !== null) clearInterval(interval);
+        if (eventInterval !== null) clearInterval(eventInterval);
+        if (chatterInterval !== null) clearInterval(chatterInterval);
         bot.action(data_channel, 'Gooooooooooooobie!');
     }
 };
