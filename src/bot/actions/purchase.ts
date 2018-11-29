@@ -1,7 +1,7 @@
 import api from "../../api";
 
-const assertKeyOfStore = (string: string): keyof Store|void => {
-    if (string === 'ffxiv' || string === 'gw2') return string;
+const assertKeyOfStore = (string: string): keyof Store | void => {
+    if (string === 'ticket') return string;
     return undefined;
 };
 

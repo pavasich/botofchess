@@ -41,6 +41,7 @@ interface DirtyUser {
 interface Store {
     ffxiv: number
     gw2: number
+    ticket: number
 }
 
 interface Data {

@@ -410,13 +410,13 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'spicybalance':
             bot.action(channel, actions.balance(userstate));
             break;
-        //
-        // case 'purchase':
-        //     const response = actions.purchase(userstate, cdr[0], cdr[1]);
-        //     if (response !== undefined) {
-        //         bot.action(channel, response);
-        //     }
-        //     break;
+
+        case 'purchase':
+            const response = actions.purchase(userstate, cdr[0], cdr[1]);
+            if (response !== undefined) {
+                bot.action(channel, response);
+            }
+            break;
 
         /**
          * enable logging - disabled by default
