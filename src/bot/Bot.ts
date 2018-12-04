@@ -39,23 +39,25 @@ export async function fetchChatters() {
 fetchChatters();
 chatterInterval = setInterval(fetchChatters, minute5);
 
+const ENABLE_EVENT = false;
 
 const startStream = (userstate: DirtyUser, channel: string) => {
     if (isMod(userstate)) {
         chatterInterval = setInterval(fetchChatters, minute5);
         broadcasting = true;
         start_time = Date.now();
-        eventInterval = setInterval(() => {
-            api.actions.distributeCurrency(chatters, subsonly);
-            bot.action(data_channel, 'Tokens have been distributed! (+20)');
-        }, minute20);
+        if (ENABLE_EVENT) {
+            eventInterval = setInterval(() => {
+                api.actions.distributeCurrency(chatters, subsonly);
+                bot.action(data_channel, 'Tokens have been distributed! (+20)');
+            }, minute20);
+        }
         bot.action(data_channel, 'Hamlo >D');
     }
 };
 
 const endStream = (userstate: DirtyUser) => {
     if (isMod(userstate)) {
-        clearInterval()
         broadcasting = false;
         start_time = undefined;
         if (eventInterval !== null) clearInterval(eventInterval);
@@ -379,7 +381,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'event':
         case 'giveaway':
-            say(`From November 26th - 30th, it's the Birdsgiving giveaway! Details here: http://bit.ly/birdsgiving`);
+            say(`No events going on right now!`);
             break;
 
         // case 'raffle':
@@ -404,20 +406,20 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         //     }
         //     break;
 
-        /**
-         * balance
-         */
-        case 'balance':
-        case 'spicybalance':
-            bot.action(channel, actions.balance(userstate));
-            break;
-
-        case 'purchase':
-            const response = actions.purchase(userstate, cdr[0], cdr[1]);
-            if (response !== undefined) {
-                bot.action(channel, response);
-            }
-            break;
+        // /**
+        //  * balance
+        //  */
+        // case 'balance':
+        // case 'spicybalance':
+        //     bot.action(channel, actions.balance(userstate));
+        //     break;
+        //
+        // case 'purchase':
+        //     const response = actions.purchase(userstate, cdr[0], cdr[1]);
+        //     if (response !== undefined) {
+        //         bot.action(channel, response);
+        //     }
+        //     break;
 
         /**
          * enable logging - disabled by default
@@ -464,15 +466,15 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        case 'givememoney':
-            if (userstate.username === 'bebop_bebop') {
-                console.log('ok');
-                await api.actions.distributeCurrency(chatters, subsonly);
-                bot.action(channel, 'ok!');
-            } else {
-                bot.action(channel, 'lol nty');
-            }
-            break;
+        // case 'givememoney':
+        //     if (userstate.username === 'bebop_bebop') {
+        //         console.log('ok');
+        //         await api.actions.distributeCurrency(chatters, subsonly);
+        //         bot.action(channel, 'ok!');
+        //     } else {
+        //         bot.action(channel, 'lol nty');
+        //     }
+        //     break;
 
         case 'raffle':
             if (isMod(userstate)) {
