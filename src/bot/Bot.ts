@@ -381,7 +381,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'event':
         case 'giveaway':
-            say(`No events going on right now!`);
+            say(`We're drawing the Birdsgiving winners today! Details here: http://bit.ly/birdsgiving`);
             break;
 
         // case 'raffle':
