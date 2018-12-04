@@ -10,6 +10,7 @@ import limits from './limits';
 import actions from './actions';
 import { isMod } from './util';
 import { minute, second } from '../util/time-expand';
+import raffle from '../api/currency/raffle';
 
 const second1 = second(1);
 const second2 = second1 * 2;
@@ -473,11 +474,11 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        // case 'raffle':
-        //     if (isMod(userstate)) {
-        //         raffle();
-        //     }
-        //     break;
+        case 'raffle':
+            if (isMod(userstate)) {
+                raffle();
+            }
+            break;
 
         default:
             writeLog = false;

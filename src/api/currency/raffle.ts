@@ -17,19 +17,15 @@ const raffle = (ls: Array<string>) => {
 };
 
 export default () => {
-    const tickets: Tickets  = db.get(MODELS.TICKETS).value();
+    const wallets: Tickets  = db.get(MODELS.TICKETS).value();
     const users: Users = db.get(MODELS.USER).value();
-    const ids = Object.keys(tickets);
-    let ffxiv: Array<string> = [];
-    let gw2: Array<string> = [];
-    for (let i = 0, n = ids.length; i < n; i++) {
-        const currentUsername: any = _.constant(users[ids[i]].name);
-        const ticketBalance: Store = tickets[ids[i]];
-        ffxiv = [...ffxiv, ..._.times(ticketBalance.ffxiv, currentUsername)];
-        gw2 = [...gw2, ..._.times(ticketBalance.gw2, currentUsername)];
+    const user_ids = Object.keys(wallets);
+    let ticket: Array<string> = [];
+    for (let i = 0, n = user_ids.length; i < n; i++) {
+        const currentUsername: any = _.constant(users[user_ids[i]].name);
+        const ticketBalance: Store = wallets[user_ids[i]];
+        ticket = [...ticket, ..._.times<string>(ticketBalance.ticket, currentUsername)];
     }
-    console.log('FINAL FANTASY');
-    raffle(ffxiv);
-    console.log('GW2');
-    raffle(gw2);
+    console.log('WINNERS');
+    raffle(ticket);
 };
