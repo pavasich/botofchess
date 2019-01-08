@@ -376,13 +376,13 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        /**
-         * event|giveaway
-         */
-        case 'event':
-        case 'giveaway':
-            say(`We're drawing the Birdsgiving winners today! Details here: http://bit.ly/birdsgiving`);
-            break;
+        // /**
+        //  * event|giveaway
+        //  */
+        // case 'event':
+        // case 'giveaway':
+        //     say(`We're drawing the Birdsgiving winners today! Details here: http://bit.ly/birdsgiving`);
+        //     break;
 
         // case 'raffle':
         //     if (isMod(userstate) && usernameSet === undefined) {
@@ -406,13 +406,13 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         //     }
         //     break;
 
-        // /**
-        //  * balance
-        //  */
-        // case 'balance':
-        // case 'spicybalance':
-        //     bot.action(channel, actions.balance(userstate));
-        //     break;
+        /**
+         * balance
+         */
+        case 'balance':
+        case 'spicybalance':
+            bot.action(channel, actions.balance(userstate));
+            break;
         //
         // case 'purchase':
         //     const response = actions.purchase(userstate, cdr[0], cdr[1]);
@@ -480,6 +480,24 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (isMod(userstate)) {
                 raffle();
             }
+            break;
+
+        case 'teamtrue':
+            bot.action(channel, api.messages.teamTrueAbout.message);
+            break;
+
+        case 'event':
+        case 'truetuesday': {
+            const dateNow = new Date();
+            const dateNowSet = dateNow.setHours(0, 0, 0, 0);
+            if (dateNowSet === api.messages.trueTuesday.event_param.setHours(0, 0, 0, 0)) {
+                bot.action(channel, api.messages.trueTuesday.message)
+            }
+            break;
+        }
+
+        case 'tttt':
+            bot.action(channel, api.messages.ttttAbout.message);
             break;
 
         default:

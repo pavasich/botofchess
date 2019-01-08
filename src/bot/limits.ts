@@ -51,6 +51,9 @@ const limits: SNMap = {
     stream: minute1,
     tryagain: 0,
     uptime: minute1,
+    tttt: minute1,
+    teamtrue: minute1,
+    truetuesday: minute1,
 };
 
 export default limits;

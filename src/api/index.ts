@@ -5,6 +5,7 @@ import currency from './currency';
 import log from './log';
 import word from './word';
 import * as events from './events';
+import * as messages from './message-sources';
 
 export default {
     actions,
@@ -14,4 +15,5 @@ export default {
     user,
     word,
     events,
+    messages,
 };

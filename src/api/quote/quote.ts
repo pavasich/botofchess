@@ -1,5 +1,5 @@
-import db, { MODELS } from '../../db';
+import { quotes } from './source/quote';
 import { pickRand } from '../../util/arrays';
 
-export const getRandomQuote = () => pickRand(db.get(MODELS.QUOTE).value());
+export const getRandomQuote = () => pickRand(quotes);
 
