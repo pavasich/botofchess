@@ -486,18 +486,33 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             bot.action(channel, api.messages.teamTrueAbout.message);
             break;
 
-        case 'event':
-        case 'truetuesday': {
-            const dateNow = new Date();
-            const dateNowSet = dateNow.setHours(0, 0, 0, 0);
-            if (dateNowSet === api.messages.trueTuesday.event_param.setHours(0, 0, 0, 0)) {
-                bot.action(channel, api.messages.trueTuesday.message)
-            }
-            break;
-        }
+        // case 'event':
 
         case 'tttt':
             bot.action(channel, api.messages.ttttAbout.message);
+            break;
+
+        case 'giveaway':
+            if (isMod(userstate)) {
+                if (typeof cdr[0] === 'string' && cdr[0].length > 0) {
+                    const item = cdr.join(' ');
+                    if (item.replace(' ', '').length > 0) {
+                        bot.action(channel, `Starting the ${item} giveaway! Say "!enter" in chat to be eligible! You have 30 seconds!`);
+                        api.events.giveaway.start((winnerName) => {
+                            const reveal = new Monologue();
+                            reveal
+                                .add(`Time's up for the ${item} giveaway!`, 1000)
+                                .add('The winner is...', 2000)
+                                .add(`${winnerName}! Congratulations!`);
+                            speak(reveal);
+                        });
+                    }
+                }
+            }
+            break;
+
+        case 'enter':
+            api.events.giveaway.enter(userstate);
             break;
 
         default:
