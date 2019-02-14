@@ -30,7 +30,7 @@ const limits: SNMap = {
     flipcoin: second30,
     games: minute5,
     gameslist: minute5,
-    giveaway: minute5,
+    giveaway: 0,
     gw2: minute1,
     help: minute1,
     hug: second10,
