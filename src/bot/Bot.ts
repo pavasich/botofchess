@@ -501,9 +501,9 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                         api.events.giveaway.start((winnerName) => {
                             const reveal = new Monologue();
                             reveal
-                                .add(`Time's up for the ${item} giveaway!`, 1000)
-                                .add('The winner is...', 2000)
-                                .add(`${winnerName}! Congratulations!`);
+                                .add(`Time's up for the ${item} giveaway!`)
+                                .add('The winner is...', 1000)
+                                .add(`${winnerName}! Congratulations!`, 2000);
                             speak(reveal);
                         });
                     }
