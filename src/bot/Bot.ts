@@ -515,6 +515,9 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             api.events.giveaway.enter(userstate);
             break;
 
+        case 'streamgifts':
+            bot.action(channel, `We're Partnered with StreamGifts, a gifting service that enables Twitch communities to send appreciation gifts to their favorite streamers while protecting personal information on both sides--safer than an Amazon wishlist or even a P.O. box is now. Send a gift through https://stream.gifts/birdofchess`)
+
         default:
             writeLog = false;
             break;

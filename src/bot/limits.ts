@@ -49,6 +49,7 @@ const limits: SNMap = {
     startstream: 0,
     steam: minute5,
     stream: minute1,
+    streamgifts: second5,
     tryagain: 0,
     uptime: minute1,
     tttt: minute1,
