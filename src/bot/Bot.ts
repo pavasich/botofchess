@@ -521,7 +521,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                 if (isMod(userstate)) {
                     const result = api.actions.setCurrencyMultiplier(cdr[0]);
                     if (result) {
-                        bot.action(channel, `updated :: "payout" = ${20 * result} (20 * ${result})`);
+                        bot.action(channel, `updated :: payout = ${20 * result}`);
                     }
                 }
             } else {
