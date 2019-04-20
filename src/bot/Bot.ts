@@ -8,16 +8,8 @@ import { pickRand } from '../util/arrays';
 import CommandLimiter from './CommandLimiter';
 import limits from './limits';
 import actions from './actions';
-import { isMod } from './util';
-import { minute, second } from '../util/time-expand';
+import { isMod, t } from './util';
 import raffle from '../api/currency/raffle';
-
-const second1 = second(1);
-const second2 = second1 * 2;
-const second4 = second2 * 2;
-const second30 = second1 * 30;
-const minute5 = minute(5);
-const minute20 = minute(20);
 
 const rateLimit = new CommandLimiter(limits);
 let start_time: number|void;
@@ -27,7 +19,7 @@ let eventInterval: NodeJS.Timer|null;
 let subsonly = false;
 let chatters: Array<string>;
 
-export async function fetchChatters() {
+async function fetchChatters() {
     console.log('fetching chatters...');
     const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, { method: 'GET' });
     if (response.ok) {
@@ -36,21 +28,23 @@ export async function fetchChatters() {
         console.log('got chatters:', chatters);
     }
 }
+
 fetchChatters();
-chatterInterval = setInterval(fetchChatters, minute5);
 
-const ENABLE_EVENT = false;
+chatterInterval = setInterval(fetchChatters, t.minute5);
 
-const startStream = (userstate: DirtyUser, channel: string) => {
+const ENABLE_EVENT = true;
+
+const startStream = (userstate: DirtyUser) => {
     if (isMod(userstate)) {
-        chatterInterval = setInterval(fetchChatters, minute5);
+        chatterInterval = setInterval(fetchChatters, t.minute5);
         broadcasting = true;
         start_time = Date.now();
         if (ENABLE_EVENT) {
             eventInterval = setInterval(() => {
                 api.actions.distributeCurrency(chatters, subsonly);
                 bot.action(data_channel, 'Tokens have been distributed! (+20)');
-            }, minute20);
+            }, t.minute20);
         }
         bot.action(data_channel, 'Hamlo >D');
     }
@@ -77,7 +71,7 @@ const logAction = (userstate: DirtyUser, string: string) => {
  *   S E T U P
  */
 console.log('running!');
-const say_bounced = debounce((s) => { bot.action(data_channel, s) }, second2);
+const say_bounced = debounce((s) => { bot.action(data_channel, s) }, t.second2);
 
 /**
  * say
@@ -149,7 +143,7 @@ const flipCoin = (name: string) => {
     const result = pickRand(coin_sides);
     setTimeout(() => {
         bot.action(data_channel, `   ${result} !`);
-    }, second1);
+    }, t.second1);
 };
 
 const getWinner = () => {
@@ -158,7 +152,7 @@ const getWinner = () => {
     setTimeout(() => {
         dangerSay(`${result[0]}, requesting ${result[1]}!`);
         dangerSay('Okay?');
-    }, second4);
+    }, t.second4);
 };
 
 let tricking = false;
@@ -211,6 +205,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
     if (message[0] !== '!') {
         return;
     }
+
     console.log('checking out a message', userstate, message);
     const [car, ...cdr] = message.replace('!', '').toLowerCase().split(' ');
     if (limits[car] !== undefined) {
@@ -268,14 +263,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'help':
         case 'commands':
-            bot.action(channel, '!help [!commands] || !shame [!shametoken] || !flip [!flipcoin|!coinflip|!cointoss] || !games [!gameslist] || !roll (number) || !quote || !donorquote || !request (during sub requests) || !hug || !stream [!uptime] || !discord || !steam || !balance || !giveaway [!event] || !ffxiv || !gw2 || !battlenet [!bnet|!btag|!battletag|!ow|!overwatch] || !imanerd for bot specs.');
+            bot.action(channel, api.messages.help);
             break;
 
         /**
          * imanerd
          */
         case 'imanerd':
-            bot.action(channel, 'Made in JavaScript, using the twitch-js package (RIP tmi.js). Shames are saved as JSON to bebop\'s PC. More details will be available as the bot gains functionality :3');
+            bot.action(channel, api.messages.imanerd);
             break;
 
         /**
@@ -290,7 +285,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          * steam
          */
         case 'steam':
-            say('steamcommunity.com/id/birdofchess');
+            say(api.messages.steam);
             break;
 
         /**
@@ -309,12 +304,12 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'startrequests':
             api.subs.requests.clear();
-            dangerSay('Taking sub requests for the next game!');
-            dangerSay('You have 30 seconds!');
+            dangerSay(api.messages.startRequests[0]);
+            dangerSay(api.messages.startRequests[1]);
             setTimeout(() => {
-                dangerSay('Times up! The winner is...');
+                dangerSay(api.messages.startRequests[2]);
                 getWinner();
-            }, second30);
+            }, t.second30);
             break;
 
         // /**
@@ -360,29 +355,28 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             if (isMod(userstate)) {
                 if (cdr[0] === 'start') {
                     if (!broadcasting) {
-                        startStream(userstate, channel);
+                        startStream(userstate);
                     } else {
-                        bot.action(channel, 'We\'re already broadcasting, silly');
+                        bot.action(channel, api.messages.broadcast.alreadyStreaming);
                     }
                 } else if (cdr[0] === 'end') {
                     if (broadcasting) {
                         endStream(userstate);
                     } else {
-                        bot.action(channel, 'We aren\'t streaming, silly');
+                        bot.action(channel, api.messages.broadcast.notStreaming);
                     }
                 } else {
-                    bot.action(channel, 'invalid syntax - !broadcast [start|end]');
+                    bot.action(channel, api.messages.broadcast.syntax);
                 }
             }
             break;
 
-        // /**
-        //  * event|giveaway
-        //  */
-        // case 'event':
-        // case 'giveaway':
-        //     say(`We're drawing the Birdsgiving winners today! Details here: http://bit.ly/birdsgiving`);
-        //     break;
+        /**
+         * event|giveaway
+         */
+        case 'event':
+            say(`Welcome to the Spring Festival! Details here: http://bit.ly/spring-festival-birds`);
+            break;
 
         // case 'raffle':
         //     if (isMod(userstate) && usernameSet === undefined) {
@@ -413,13 +407,13 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'spicybalance':
             bot.action(channel, actions.balance(userstate));
             break;
-        //
-        // case 'purchase':
-        //     const response = actions.purchase(userstate, cdr[0], cdr[1]);
-        //     if (response !== undefined) {
-        //         bot.action(channel, response);
-        //     }
-        //     break;
+
+        case 'purchase':
+            const response = actions.purchase(userstate, cdr[0], cdr[1]);
+            if (response !== undefined) {
+                bot.action(channel, response);
+            }
+            break;
 
         /**
          * enable logging - disabled by default
@@ -436,11 +430,11 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             break;
 
         case 'ffxiv':
-            say('[Arden Everleigh :: Aether - Zalera]');
+            say(api.messages.ffxiv.arden);
             break;
 
         case 'gw2':
-            say("[Rook.6302 :: Yak's Bend]");
+            say(api.messages.gw2.character);
             break;
 
         case 'battlenet':
@@ -449,7 +443,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'overwatch':
         case 'btag':
         case 'battletag':
-            say("[Rook#11953 :: Main], [Rook#11992 :: Alternate]");
+            say(api.messages.battlenet.battletag);
             break;
 
         case 'subscribers':
@@ -466,15 +460,15 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        // case 'givememoney':
-        //     if (userstate.username === 'bebop_bebop') {
-        //         console.log('ok');
-        //         await api.actions.distributeCurrency(chatters, subsonly);
-        //         bot.action(channel, 'ok!');
-        //     } else {
-        //         bot.action(channel, 'lol nty');
-        //     }
-        //     break;
+        case 'givememoney':
+            if (userstate.username === 'bebop_bebop') {
+                console.log('ok');
+                await api.actions.distributeCurrency(chatters, subsonly);
+                bot.action(channel, 'ok!');
+            } else {
+                bot.action(channel, 'lol nty');
+            }
+            break;
 
         case 'raffle':
             if (isMod(userstate)) {
@@ -483,13 +477,13 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             break;
 
         case 'teamtrue':
-            bot.action(channel, api.messages.teamTrueAbout.message);
+            bot.action(channel, api.messages.teamTrueAbout);
             break;
 
         // case 'event':
 
         case 'tttt':
-            bot.action(channel, api.messages.ttttAbout.message);
+            bot.action(channel, api.messages.ttttAbout);
             break;
 
         case 'giveaway':
@@ -516,7 +510,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             break;
 
         case 'streamgifts':
-            bot.action(channel, `We're Partnered with StreamGifts, a gifting service that enables Twitch communities to send appreciation gifts to their favorite streamers while protecting personal information on both sides--safer than an Amazon wishlist or even a P.O. box is now. Send a gift through https://stream.gifts/birdofchess`)
+            bot.action(channel, api.messages.streamGifts);
 
         default:
             writeLog = false;

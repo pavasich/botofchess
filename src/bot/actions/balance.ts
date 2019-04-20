@@ -1,12 +1,8 @@
-import api from "../../api";
-import pluralize from '../../util/pluralize';
+import api from '../../api';
 
 export default (userstate: DirtyUser) => {
     const balance = api.currency.getBalanceForDirtyUser(userstate);
-    const { ticket } = api.currency.getTicketsForDirtyUser(userstate);
-    const s = ticket > 0
-        ? ` and ${ticket} ticket${pluralize(ticket)}`
-        : '';
+    const { gw2, ffxiv } = api.currency.getTicketsForDirtyUser(userstate);
 
-    return `@${userstate['display-name']}: You have ${balance} token${pluralize(balance)}${s} in the bank.`;
+    return `@${userstate['display-name']}: [Tokens - ${balance}] :: [FFXIV - ${ffxiv}] :: [GW2 - ${gw2}]`;
 }

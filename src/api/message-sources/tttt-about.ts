@@ -1,4 +1,4 @@
-export const message = `
+export const ttttAbout = `
 Together to the Top is a community created by AtheneWins, with a goal of encouraging
 gamers to collaborate, cross-promote, create content, and grow, together.
 It doesn’t have to be a competition.

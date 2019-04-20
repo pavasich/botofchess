@@ -8,7 +8,7 @@ const prices: Store = {
     ticket: 100,
 };
 
-const availableForPurchase = new Set(['ticket']);
+const availableForPurchase = new Set(['ffxiv', 'gw2']);
 
 export default (dirtyUser: DirtyUser, amount: number, item: keyof Store) => {
     if (amount <= 0) {

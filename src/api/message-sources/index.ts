@@ -1,7 +1,11 @@
-import * as _teamTrueAbout from './team-true-about';
-import * as _trueTuesday from './true-tuesday';
-import * as _ttttAbout from './tttt-about';
-
-export const teamTrueAbout = _teamTrueAbout;
-export const trueTuesday = _trueTuesday;
-export const ttttAbout = _ttttAbout;
+export { battlenet } from './battlenet';
+export { broadcast } from './broadcast';
+export { ffxiv } from './ffxiv';
+export { gw2 } from './gw2';
+export { help } from './help';
+export { imanerd } from './imanerd'
+export { startRequests } from './start-requests';
+export { steam } from './steam';
+export { streamGifts } from './stream-gifts';
+export { teamTrueAbout } from './team-true-about';
+export { ttttAbout } from './tttt-about';
