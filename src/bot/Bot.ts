@@ -43,7 +43,10 @@ const startStream = (userstate: DirtyUser) => {
         if (ENABLE_EVENT) {
             eventInterval = setInterval(() => {
                 api.actions.distributeCurrency(chatters, subsonly);
-                bot.action(data_channel, 'Tokens have been distributed! (+20)');
+                bot.action(
+                    data_channel,
+                    `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
+                );
             }, t.minute20);
         }
         bot.action(data_channel, 'Hamlo >D');
@@ -516,7 +519,10 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'multiplier':
             if (typeof cdr[0] === 'string' && cdr[0].length > 0) {
                 if (isMod(userstate)) {
-                    api.actions.setCurrencyMultiplier(cdr[0]);
+                    const result = api.actions.setCurrencyMultiplier(cdr[0]);
+                    if (result) {
+                        bot.action(channel, `updated :: "payout" = ${20 * result} (20 * ${result})`);
+                    }
                 }
             } else {
                 bot.action(channel, `The current multiplier is ${api.actions.getCurrencyMultiplier()}!`);

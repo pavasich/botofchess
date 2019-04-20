@@ -28,7 +28,9 @@ export function setCurrencyMultiplier(n: string) {
     const newMult = parseInt(n, 10);
     if (newMult === newMult && newMult > 0) {
         multiplier = newMult;
+        return multiplier;
     }
+    return false;
 }
 
 export function getCurrencyMultiplier() {
