@@ -511,6 +511,18 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
 
         case 'streamgifts':
             bot.action(channel, api.messages.streamGifts);
+            break;
+
+        case 'multiplier':
+            if (typeof cdr[0] === 'string' && cdr[0].length > 0) {
+                if (isMod(userstate)) {
+                    api.actions.setCurrencyMultiplier(cdr[0]);
+                }
+            } else {
+                bot.action(channel, `The current multiplier is ${api.actions.getCurrencyMultiplier()}!`);
+            }
+            break;
+
 
         default:
             writeLog = false;
