@@ -24,7 +24,7 @@ const limits: SNMap = {
     donorquote: second5,
     enablelogging: 0,
     endstream: 0,
-    event: minute5,
+    event: 0,
     ffxiv: minute1,
     flip: second30,
     flipcoin: second30,
