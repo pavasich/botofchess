@@ -525,7 +525,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
                     }
                 }
             } else {
-                bot.action(channel, `The current multiplier is ${api.actions.getCurrencyMultiplier()}!`);
+                bot.action(channel, `Current multiplier: ${api.actions.getCurrencyMultiplier()}`);
             }
             break;
 
