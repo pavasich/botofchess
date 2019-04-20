@@ -529,6 +529,10 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+        case 'skyforge':
+            bot.action(channel, `Sponsored: Skyforge, a beautiful, MMORPG game with awesome grinding and battles. Think it looks fun? Check it out here: https://wehy.pe/3/birdofchess`);
+            break;
+
 
         default:
             writeLog = false;
