@@ -10,6 +10,7 @@ import limits from './limits';
 import actions from './actions';
 import { isMod, t } from './util';
 import raffle from '../api/currency/raffle';
+import { BalanceAction } from '../api/currency/update-balance';
 
 const rateLimit = new CommandLimiter(limits);
 let start_time: number|void;
@@ -467,7 +468,6 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
 
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
-                console.log('ok');
                 await api.actions.distributeCurrency(chatters, subsonly);
                 bot.action(channel, 'ok!');
             } else {
@@ -535,6 +535,20 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             bot.action(channel, `Sponsored: Skyforge, a beautiful, MMORPG game with awesome grinding and battles. Think it looks fun? Check it out here: https://wehy.pe/3/birdofchess`);
             break;
 
+        case 'update-balance': {
+            if (isMod(userstate)) {
+                const [username, action, amount] = cdr;
+                if (
+                    action === BalanceAction.inc
+                    || action === BalanceAction.dec
+                    || action === BalanceAction.set
+                ) {
+                    const result = api.currency.updateBalance(username, action, parseInt(amount, 10));
+                    bot.action(channel, result);
+                }
+            }
+            break;
+        }
 
         default:
             writeLog = false;
