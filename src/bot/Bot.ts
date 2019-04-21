@@ -23,9 +23,11 @@ async function fetchChatters() {
     console.log('fetching chatters...');
     const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, { method: 'GET' });
     if (response.ok) {
-        const { chatters: { moderators, viewers } } = await response.json();
-        chatters = [...viewers, ...moderators];
-        console.log('got chatters:', chatters);
+        const json = await response.json();
+        const { chatters: { moderators, viewers, vips, broadcaster, admins, staff, global_mods } } = json;
+        chatters = [...viewers, ...moderators, ...vips, ...broadcaster, ...admins, ...staff, ...global_mods ];
+        console.log('got chatters:', json);
+
     }
 }
 
