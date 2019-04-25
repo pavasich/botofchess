@@ -1,15 +1,15 @@
 import isFollower from './is-follower';
-import isSubscriber from './is-subscriber';
 import create, { createFromDirtyUser } from './create';
 import update, { updateFromDirtyUser } from './update';
 import upsert, { upsertFromDirtyUser } from './upsert';
+import { findUserByUserName } from './find-by-username';
 
 export default {
     isFollower,
-    isSubscriber,
     create,
     update,
     upsert,
+    findByUsername: findUserByUserName,
     dirty: {
         create: createFromDirtyUser,
         update: updateFromDirtyUser,

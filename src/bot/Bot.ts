@@ -550,6 +550,34 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             break;
         }
 
+        case 'update-wallet': {
+            if (isMod(userstate)) {
+                const [username, action, type, amount] = cdr;
+                if (
+                    (
+                        action === BalanceAction.inc
+                        || action === BalanceAction.dec
+                        || action === BalanceAction.set
+                    ) && (
+                        type === 'gw2'
+                        || type === 'ffxiv'
+                    )
+                ) {
+                    const result = api.currency.updateWallet(username, action, type, parseInt(amount, 10));
+                    bot.action(channel, result);
+                }
+            }
+            break;
+        }
+
+        case '__danger__purge__wallets__': {
+            if (userstate.username === 'bebop_bebop' && isMod(userstate)) {
+                const result = api.__danger.__purge__wallets__();
+                bot.action(channel, result);
+            }
+            break;
+        }
+
         default:
             writeLog = false;
             break;

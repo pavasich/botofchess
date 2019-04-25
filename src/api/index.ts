@@ -6,6 +6,7 @@ import log from './log';
 import word from './word';
 import * as events from './events';
 import * as messages from './message-sources';
+import * as __danger from './__danger';
 
 export default {
     actions,
@@ -16,4 +17,5 @@ export default {
     word,
     events,
     messages,
+    __danger,
 };
