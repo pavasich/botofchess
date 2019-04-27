@@ -20,12 +20,16 @@ export default () => {
     const wallets: Tickets  = db.get(MODELS.TICKETS).value();
     const users: Users = db.get(MODELS.USER).value();
     const user_ids = Object.keys(wallets);
-    let ticket: Array<string> = [];
+    let ffxiv: Array<string> = [];
+    let gw2: Array<string> = [];
     for (let i = 0, n = user_ids.length; i < n; i++) {
         const currentUsername: any = _.constant(users[user_ids[i]].name);
         const ticketBalance: Store = wallets[user_ids[i]];
-        ticket = [...ticket, ..._.times<string>(ticketBalance.ticket, currentUsername)];
+        ffxiv = [...ffxiv, ..._.times<string>(ticketBalance.ffxiv, currentUsername)];
+        gw2 = [...gw2, ..._.times<string>(ticketBalance.gw2, currentUsername)];
     }
-    console.log('WINNERS');
-    raffle(ticket);
+    console.log('FFXIV WINNERS');
+    raffle(ffxiv);
+    console.log('GW2 WINNERS');
+    raffle(gw2);
 };
