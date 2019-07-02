@@ -1,102 +1,141 @@
 import debounce from 'lodash/debounce';
-import Monologue from '../models/Monologue/index';
-import emotes from '../util/emotes';
-import { coin_sides, channel as data_channel } from './globals';
-import bot from './client';
+
 import api from '../api';
-import { pickRand } from '../util/arrays';
-import CommandLimiter from './CommandLimiter';
-import limits from './limits';
-import actions from './actions';
-import { isMod, t } from './util';
 import raffle from '../api/currency/raffle';
 import { BalanceAction } from '../api/currency/update-balance';
+import Monologue from '../models/Monologue/index';
+import emotes from '../util/emotes';
 
-const rateLimit = new CommandLimiter(limits);
-let start_time: number|void;
-let broadcasting = false;
-let chatterInterval: NodeJS.Timer|null;
-let eventInterval: NodeJS.Timer|null;
-let subsonly = false;
-let chatters: Array<string>;
+import actions from './actions';
+import bot from './client';
+import { channel as data_channel } from './globals';
+import limits from './limits';
+import { isMod, t } from './util';
+import { setState, state } from './state';
 
+
+/** fetchChatters */
 async function fetchChatters() {
     console.log('fetching chatters...');
     const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, { method: 'GET' });
     if (response.ok) {
         const json = await response.json();
         const { chatters: { moderators, viewers, vips, broadcaster, admins, staff, global_mods } } = json;
-        chatters = [...viewers, ...moderators, ...vips, ...broadcaster, ...admins, ...staff, ...global_mods ];
+        setState({
+            chatters: [
+                ...viewers,
+                ...moderators,
+                ...vips,
+                ...broadcaster,
+                ...admins,
+                ...staff,
+                ...global_mods,
+            ],
+        });
         console.log('got chatters:', json);
-
     }
 }
 
 fetchChatters();
 
-chatterInterval = setInterval(fetchChatters, t.minute5);
+setState({
+    chatterInterval: setInterval(fetchChatters, t.minute5)
+});
 
-const ENABLE_EVENT = true;
 
-const startStream = (userstate: DirtyUser) => {
+/** start & end stream */
+function startStream(userstate: DirtyUser) {
     if (isMod(userstate)) {
-        chatterInterval = setInterval(fetchChatters, t.minute5);
-        broadcasting = true;
-        start_time = Date.now();
-        if (ENABLE_EVENT) {
-            eventInterval = setInterval(() => {
-                api.actions.distributeCurrency(chatters, subsonly);
-                bot.action(
-                    data_channel,
-                    `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
-                );
-            }, t.minute20);
+        if (state.chatterInterval !== null) {
+            clearInterval(state.chatterInterval as NodeJS.Timer);
+            setState({
+                chatterInterval: null,
+            });
+        }
+
+        setState({
+            chatterInterval: setInterval(fetchChatters, t.minute5),
+            broadcasting: true,
+            startTime: Date.now(),
+        });
+
+        if (state.enableEvent) {
+            setState({
+                eventInterval: setInterval(() => {
+                    api.actions.distributeCurrency(state.chatters, state.subsonly);
+                    bot.action(
+                        data_channel,
+                        `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
+                    );
+                }, t.minute20)
+            });
         }
         bot.action(data_channel, 'Hamlo >D');
     }
-};
+}
 
-const endStream = (userstate: DirtyUser) => {
+function endStream(userstate: DirtyUser) {
     if (isMod(userstate)) {
-        broadcasting = false;
-        start_time = undefined;
-        if (eventInterval !== null) clearInterval(eventInterval);
-        if (chatterInterval !== null) clearInterval(chatterInterval);
+        setState({
+            broadcasting: false,
+            startTime: undefined,
+        });
+
+        if (state.eventInterval !== null) {
+            clearInterval(state.eventInterval);
+            setState({
+                eventInterval: null,
+            })
+        }
+
+        if (state.chatterInterval !== null) {
+            clearInterval(state.chatterInterval);
+            setState({
+                chatterInterval: null,
+            });
+        }
+
         bot.action(data_channel, 'Gooooooooooooobie!');
     }
-};
+}
 
-let enableLogging = false;
-const logAction = (userstate: DirtyUser, string: string) => {
-    if (enableLogging) {
+
+function logAction(userstate: DirtyUser, string: string) {
+    if (state.enableLogging) {
         api.log(`INFO::${userstate['display-name']}::${string}::${(new Date()).toJSON()}`);
     }
-};
+}
 
-/**
- *   S E T U P
- */
+
+/** S E T U P */
 console.log('running!');
 const say_bounced = debounce((s) => { bot.action(data_channel, s) }, t.second2);
+
 
 /**
  * say
  * @param {string} s
  */
-const say = (s: string) => say_bounced(s);
+function say(s: string) {
+    return say_bounced(s);
+}
+
 
 /**
  * dangerSay
  * @param {string} string
  */
-const dangerSay = (string: string) => bot.action(data_channel, string);
+function dangerSay(string: string) {
+    return bot.action(data_channel, string);
+}
+
 
 /**
  * speak
  * @param {Monologue} monologue
  */
-const speak = (monologue: Monologue) => {
-    const recur = (lines: Array<Line>) => {
+function speak(monologue: Monologue) {
+    function recur(lines: Array<Line>) {
         if (lines.length > 0) {
             const [line, ...rest] = lines;
             if (line.delay !== undefined) {
@@ -109,77 +148,55 @@ const speak = (monologue: Monologue) => {
                 if (rest.length > 0) recur(rest);
             }
         }
-    };
+    }
     recur(monologue.lines);
-};
+}
 
-/**
- * on connect
- */
+
+/** on connect */
 bot.on('connected', function() {
     say('I\'m alive!!');
 });
 
-/**
- * discord
- */
-const discord = () => {
-    say('https://discord.gg/K8mtM7s');
-};
 
 /**
  * goHome
  * @param {string} name
  */
-const goHome = (name: string) => {
+function goHome(name: string) {
     if (name === 'serbosaurus' || name === data_channel) {
         bot.action(data_channel, 'no, im not ready to go...');
         bot.disconnect();
     } else {
         say('bitch you can\'t tell me what to do');
     }
-};
+}
 
-/**
- * flipCoin
- * @param {string} name
- */
-const flipCoin = (name: string) => {
-    bot.action(data_channel, `${name} flips a coin...`);
-    const result = pickRand(coin_sides);
-    setTimeout(() => {
-        bot.action(data_channel, `   ${result} !`);
-    }, t.second1);
-};
 
-const getWinner = () => {
+function getWinner() {
     const result = api.subs.requests.pickWinner();
     console.log(result);
     setTimeout(() => {
         dangerSay(`${result[0]}, requesting ${result[1]}!`);
         dangerSay('Okay?');
     }, t.second4);
-};
-
-let tricking = false;
+}
 
 
-let usernameSet: Set<string> | undefined;
-
-const commands = async (channel: string, userstate: DirtyUser, message: string, self: boolean) => {
+async function commands(channel: string, userstate: DirtyUser, message: string, self: boolean) {
     if (self) return;
     api.user.dirty.upsert(userstate);
 
-    if (broadcasting && tricking) {
+    if (state.broadcasting && state.tricking) {
         api.events.halloween.handleMessage(userstate);
     }
 
-    if (enableLogging) {
+    if (state.enableLogging) {
         api.word.saveWords(userstate, message);
     }
 
-    if (usernameSet !== undefined) {
-        usernameSet.add(userstate.username);
+    if (state.usernameSet !== undefined) {
+        state.usernameSet.add(userstate.username);
     }
 
     let sillything = [];
@@ -215,14 +232,16 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
     console.log('checking out a message', userstate, message);
     const [car, ...cdr] = message.replace('!', '').toLowerCase().split(' ');
     if (limits[car] !== undefined) {
-        if (rateLimit.enforce(userstate, car)) {
-            if (enableLogging) {
+        if (state.rateLimit.enforce(userstate, car)) {
+            if (state.enableLogging) {
                 logAction(userstate, `SKIPPED::${message}`);
             }
             return;
         }
     }
+
     let writeLog = true;
+
     switch (car) {
         /**
          * games
@@ -254,14 +273,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'flipcoin':
         case 'coinflip':
         case 'cointoss':
-            flipCoin(userstate.username);
+            speak(api.messages.flipCoin(userstate.username));
             break;
 
         /**
          * discord
          */
         case 'discord':
-            discord();
+            bot.say(api.messages.discord.url);
             break;
 
         /**
@@ -284,7 +303,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          */
         case 'stream':
         case 'uptime':
-            bot.action(channel, actions.uptime(start_time));
+            bot.action(channel, actions.uptime(state.startTime));
             break;
 
         /**
@@ -336,37 +355,30 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        /**
-         * hug
-         */
         case 'hug':
             const result = await actions.hug(userstate, cdr[0]);
             bot.action(channel, result);
             break;
 
-        /**
-         * roll
-         */
         case 'roll':
-            const monologue = api.actions.rollDie(userstate.username, cdr[0]);
+        case 'rolldice':
+        case 'dice':
+            const monologue = api.messages.rollDie(userstate.username, cdr[0]);
             if (monologue !== undefined) {
                 speak(monologue);
             }
             break;
 
-        /**
-         * broadcast start|end
-         */
         case 'broadcast':
             if (isMod(userstate)) {
                 if (cdr[0] === 'start') {
-                    if (!broadcasting) {
+                    if (!state.broadcasting) {
                         startStream(userstate);
                     } else {
                         bot.action(channel, api.messages.broadcast.alreadyStreaming);
                     }
                 } else if (cdr[0] === 'end') {
-                    if (broadcasting) {
+                    if (state.broadcasting) {
                         endStream(userstate);
                     } else {
                         bot.action(channel, api.messages.broadcast.notStreaming);
@@ -377,9 +389,6 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        /**
-         * event|giveaway
-         */
         case 'event':
             say(`Nothing for now!`);
             break;
@@ -406,9 +415,6 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         //     }
         //     break;
 
-        /**
-         * balance
-         */
         case 'balance':
         case 'spicybalance':
             bot.action(channel, actions.balance(userstate));
@@ -421,17 +427,19 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        /**
-         * enable logging - disabled by default
-         */
+        /** enable logging - disabled by default */
         case 'enablelogging':
             if (isMod(userstate)) {
-                enableLogging = true;
+                setState({
+                    enableLogging: true,
+                });
             }
             break;
         case 'disableLogging':
             if (isMod(userstate)) {
-                enableLogging = false;
+                setState({
+                    enableLogging: false
+                });
             }
             break;
 
@@ -466,21 +474,25 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
 
         case 'subscribers':
             if (isMod(userstate)) {
-                if (cdr[0] === 'on' && subsonly !== true) {
-                    subsonly = true;
+                if (cdr[0] === 'on' && state.subsonly !== true) {
+                    setState({
+                        subsonly: true
+                    });
                     bot.say(channel, 'subs only, activate!');
-                } else if (cdr[0] === 'off' && subsonly !== false) {
+                } else if (cdr[0] === 'off' && state.subsonly !== false) {
                     bot.say(channel, 'subs only, deactivate!');
-                    subsonly = false;
+                    setState({
+                        subsonly: false
+                    });
                 } else {
-                    bot.say(channel, `subs only=${subsonly}`)
+                    bot.say(channel, `subs only=${state.subsonly}`)
                 }
             }
             break;
 
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
-                await api.actions.distributeCurrency(chatters, subsonly);
+                await api.actions.distributeCurrency(state.chatters, state.subsonly);
                 bot.action(channel, 'ok!');
             } else {
                 bot.action(channel, 'lol nty');
@@ -594,10 +606,10 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             writeLog = false;
             break;
     }
-    if (writeLog && enableLogging) {
+    if (writeLog && state.enableLogging) {
         logAction(userstate, message);
     }
-};
+}
 
 
 

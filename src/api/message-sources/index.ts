@@ -1,5 +1,6 @@
 export { battlenet } from './battlenet';
 export { broadcast } from './broadcast';
+export { discord } from './discord';
 export { eso } from './eso';
 export { ffxiv } from './ffxiv';
 export { gw1 } from './gw1';
@@ -12,3 +13,5 @@ export { streamGifts } from './stream-gifts';
 export { teamTrueAbout } from './team-true-about';
 export { ttttAbout } from './tttt-about';
 export { warframe } from './warframe';
+export { flipCoin } from './flip-coin.monologue';
+export { rollDie } from './roll-die.monologue';
