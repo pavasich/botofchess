@@ -1,3 +1,3 @@
 export const ffxiv = {
-    arden: '[Arden Everleigh :: Aether - Zalera]',
+    character_0: '[Valke D\'aubigny :: Crystal - Zalera]',
 };

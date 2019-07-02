@@ -381,7 +381,7 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
          * event|giveaway
          */
         case 'event':
-            say(`Welcome to the Spring Festival! Details here: http://bit.ly/spring-festival-birds`);
+            say(`Nothing for now!`);
             break;
 
         // case 'raffle':
@@ -436,7 +436,11 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
             break;
 
         case 'ffxiv':
-            say(api.messages.ffxiv.arden);
+            say(api.messages.ffxiv.character_0);
+            break;
+
+        case 'gw1':
+            say(api.messages.gw1.character);
             break;
 
         case 'gw2':
@@ -450,6 +454,14 @@ const commands = async (channel: string, userstate: DirtyUser, message: string, 
         case 'btag':
         case 'battletag':
             say(api.messages.battlenet.battletag);
+            break;
+
+        case 'eso':
+            say(api.messages.eso.character);
+            break;
+
+        case 'warframe':
+            say(api.messages.warframe.character);
             break;
 
         case 'subscribers':
