@@ -15,3 +15,4 @@ export { ttttAbout } from './tttt-about';
 export { warframe } from './warframe';
 export { flipCoin } from './flip-coin.monologue';
 export { rollDie } from './roll-die.monologue';
+export { shoutout } from './shoutout';

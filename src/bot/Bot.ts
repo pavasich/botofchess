@@ -12,34 +12,19 @@ import { channel as data_channel } from './globals';
 import limits from './limits';
 import { isMod, t } from './util';
 import { setState, state } from './state';
+import { fetchChatters } from '../api/user/fetch-chatters';
 
-
-/** fetchChatters */
-async function fetchChatters() {
-    console.log('fetching chatters...');
-    const response = await fetch(`https://tmi.twitch.tv/group/user/${data_channel}/chatters`, { method: 'GET' });
-    if (response.ok) {
-        const json = await response.json();
-        const { chatters: { moderators, viewers, vips, broadcaster, admins, staff, global_mods } } = json;
-        setState({
-            chatters: [
-                ...viewers,
-                ...moderators,
-                ...vips,
-                ...broadcaster,
-                ...admins,
-                ...staff,
-                ...global_mods,
-            ],
-        });
-        console.log('got chatters:', json);
-    }
+async function getChatters() {
+    const chatters = await fetchChatters();
+    setState({
+        chatters,
+    });
 }
 
-fetchChatters();
+getChatters();
 
 setState({
-    chatterInterval: setInterval(fetchChatters, t.minute5)
+    chatterInterval: setInterval(getChatters, t.minute5)
 });
 
 
@@ -280,7 +265,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
          * discord
          */
         case 'discord':
-            bot.say(api.messages.discord.url);
+            bot.action(api.messages.discord.url);
             break;
 
         /**
@@ -559,6 +544,18 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             bot.action(channel, `Sponsored: Skyforge, a beautiful, MMORPG game with awesome grinding and battles. Think it looks fun? Check it out here: https://wehy.pe/3/birdofchess`);
             break;
 
+        case 'shoutout': {
+            if (isMod(userstate)) {
+                if ((typeof cdr[0] === 'string') && (cdr[0].length > 0)) {
+                    const shoutout = await api.messages.shoutout(cdr[0]);
+                    if (typeof shoutout === 'string') {
+                        bot.action(channel, shoutout);
+                    }
+                }
+            }
+            break;
+        }
+
         case 'update-balance': {
             if (isMod(userstate)) {
                 const [username, action, amount] = cdr;
@@ -577,16 +574,14 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         case 'update-wallet': {
             if (isMod(userstate)) {
                 const [username, action, type, amount] = cdr;
-                if (
-                    (
-                        action === BalanceAction.inc
-                        || action === BalanceAction.dec
-                        || action === BalanceAction.set
-                    ) && (
-                        type === 'gw2'
-                        || type === 'ffxiv'
-                    )
-                ) {
+                if ((
+                    action === BalanceAction.inc
+                    || action === BalanceAction.dec
+                    || action === BalanceAction.set
+                ) && (
+                    type === 'gw2'
+                    || type === 'ffxiv'
+                )) {
                     const result = api.currency.updateWallet(username, action, type, parseInt(amount, 10));
                     bot.action(channel, result);
                 }

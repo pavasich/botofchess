@@ -1,4 +1,5 @@
-const chatters = 'tmi.twitch.tv/group/user/birdofchess/chatters';
+import { find } from 'lodash/fp';
+import { fetchChatters } from '../../api/user/fetch-chatters';
 
 export default async (userstate: DirtyUser, huggee: string) => {
     if (huggee && huggee !== 'undefined') {
@@ -12,11 +13,9 @@ export default async (userstate: DirtyUser, huggee: string) => {
                 return`@${hugger} hugged me! *blush*`
             } else {
                 try {
-                    const response = await fetch(chatters, { method: 'GET' });
-                    if (response.ok) {
-                        const {chatters: {moderators, viewers}} = await
-                        response.json();
-                        if (moderators.includes(huggee) || viewers.includes(huggee)) {
+                    const response = await fetchChatters();
+                    if (response.length > 0) {
+                        if (find(huggee, response) !== void 0) {
                             return `@${hugger} hugs @${huggee}   :3`;
                         }
                         return `@${hugger} hugs ${huggee}.`
