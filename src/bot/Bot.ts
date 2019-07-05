@@ -265,7 +265,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
          * discord
          */
         case 'discord':
-            bot.action(api.messages.discord.url);
+            bot.action(channel, api.messages.discord.url);
             break;
 
         /**
