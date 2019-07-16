@@ -228,32 +228,24 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
     let writeLog = true;
 
     switch (car) {
-        /**
-         * games
-         */
+        /** game list url */
         case 'games':
         case 'gameslist':
             say('https://bit.ly/2GqYEfS');
             break;
 
-        /**
-         * shame
-         */
+        /** shame */
         case 'shame':
         case 'shametoken':
             say(api.actions.shame());
             break;
 
-        /**
-         * gohomeyousdrunk
-         */
+        /** gohomeyousdrunk */
         case 'gohomeyousdrunk':
             goHome(userstate.username);
             break;
 
-        /**
-         * flip (coin)
-         */
+        /** coin flip ([0, 1] mod .5) */
         case 'flip':
         case 'flipcoin':
         case 'coinflip':
@@ -261,57 +253,44 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             speak(api.messages.flipCoin(userstate.username));
             break;
 
-        /**
-         * discord
-         */
+        /** discord url */
         case 'discord':
             bot.action(channel, api.messages.discord.url);
             break;
 
-        /**
-         * help
-         */
+        /** ls commands */
         case 'help':
         case 'commands':
             bot.action(channel, api.messages.help);
             break;
 
-        /**
-         * imanerd
-         */
+        /** imanerd */
         case 'imanerd':
             bot.action(channel, api.messages.imanerd);
             break;
 
-        /**
-         * stream; uptime
-         */
+        /** stream; uptime */
         case 'stream':
         case 'uptime':
             bot.action(channel, actions.uptime(state.startTime));
             break;
 
-        /**
-         * steam
-         */
+        /** steam url */
         case 'steam':
             say(api.messages.steam);
             break;
 
-        /**
-         * quote
-         */
+        /** quote */
         case 'quote':
             speak(api.actions.getQuote());
             break;
+
 
         case 'donorquote':
             speak(api.actions.getQuote(true));
             break;
 
-        /**
-         * startRequests
-         */
+        /** start requests */
         case 'startrequests':
             api.subs.requests.clear();
             dangerSay(api.messages.startRequests[0]);
@@ -322,29 +301,27 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }, t.second30);
             break;
 
-        // /**
-        //  * tryagain
-        //  */
-        // case 'tryagain':
-        //     if (isMod(userstate)) {
-        //         getWinner();
-        //     }
-        //     break;
+        /** try again, sub request was bad */
+        case 'tryagain':
+            if (isMod(userstate)) {
+                getWinner();
+            }
+            break;
 
-        /**
-         * request
-         */
+        /** request game during sub request */
         case 'request':
             if (userstate.subscriber) {
                 api.subs.requests.takeRequest(userstate.username, cdr.join(' '));
             }
             break;
 
+        /** hug another user */
         case 'hug':
             const result = await actions.hug(userstate, cdr[0]);
             bot.action(channel, result);
             break;
 
+        /** dice roll */
         case 'roll':
         case 'rolldice':
         case 'dice':
@@ -354,6 +331,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+        /** start or end stream */
         case 'broadcast':
             if (isMod(userstate)) {
                 if (cdr[0] === 'start') {
@@ -374,37 +352,18 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+        /** description of the current event */
         case 'event':
             say(`Nothing for now!`);
             break;
 
-        // case 'raffle':
-        //     if (isMod(userstate) && usernameSet === undefined) {
-        //         usernameSet = new Set();
-        //         bot.action(channel, 'Giveaway starts now! Talk in chat to enter the raffle.');
-        //         setTimeout(() => {
-        //             if (usernameSet !== undefined) {
-        //                 const names = [...usernameSet];
-        //                 const i = parseInt(`${names.length * Math.random()}`, 10);
-        //                 bot.action(channel, 'The winner is.........');
-        //                 setTimeout(() => {
-        //                     bot.action(channel, `${names[i]}!`);
-        //                     bot.action(channel, 'Congratulations!');
-        //                 }, second1);
-        //
-        //                 usernameSet = undefined;
-        //             } else {
-        //                 say('Get bebop, something went wrong :c');
-        //             }
-        //         }, second30);
-        //     }
-        //     break;
-
+        /** display user's current ticket & token balance */
         case 'balance':
         case 'spicybalance':
             bot.action(channel, actions.balance(userstate));
             break;
 
+        /** spend tokens on tickets */
         case 'purchase':
             const response = actions.purchase(userstate, cdr[0], cdr[1]);
             if (response !== undefined) {
@@ -420,6 +379,8 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                 });
             }
             break;
+
+        /** disable logging */
         case 'disableLogging':
             if (isMod(userstate)) {
                 setState({
@@ -428,18 +389,22 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+        /** ls final fantasy 14 characters */
         case 'ffxiv':
             say(api.messages.ffxiv.character_0);
             break;
 
+        /** ls guild wars 1 characters */
         case 'gw1':
             say(api.messages.gw1.character);
             break;
 
+        /** ls guild wars 2 characters */
         case 'gw2':
             say(api.messages.gw2.character);
             break;
 
+        /** battle.net user identity */
         case 'battlenet':
         case 'bnet':
         case 'ow':
@@ -449,14 +414,17 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             say(api.messages.battlenet.battletag);
             break;
 
+        /** ls elder scrolls online characters */
         case 'eso':
             say(api.messages.eso.character);
             break;
 
+        /** ls warframe characters */
         case 'warframe':
             say(api.messages.warframe.character);
             break;
 
+        /** toggle subs-only mode */
         case 'subscribers':
             if (isMod(userstate)) {
                 if (cdr[0] === 'on' && state.subsonly !== true) {
@@ -475,6 +443,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+        /** give everyone tokens for stuff */
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
                 await api.actions.distributeCurrency(state.chatters, state.subsonly);
@@ -484,22 +453,25 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+
+        /** raffle off a prize via user tickets */
         case 'raffle':
             if (isMod(userstate)) {
                 raffle();
             }
             break;
 
+        /** team true garbage */
         case 'teamtrue':
             bot.action(channel, api.messages.teamTrueAbout);
             break;
 
-        // case 'event':
-
+        /** together to the top garbage */
         case 'tttt':
             bot.action(channel, api.messages.ttttAbout);
             break;
 
+        /** give away something to chatters */
         case 'giveaway':
             if (isMod(userstate)) {
                 if (typeof cdr[0] === 'string' && cdr[0].length > 0) {
@@ -519,14 +491,17 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+        /** enter a giveaway */
         case 'enter':
             api.events.giveaway.enter(userstate);
             break;
 
+        /** stream gifts url */
         case 'streamgifts':
             bot.action(channel, api.messages.streamGifts);
             break;
 
+        /** change token distribution multiplier */
         case 'multiplier':
             if (typeof cdr[0] === 'string' && cdr[0].length > 0) {
                 if (isMod(userstate)) {
@@ -540,11 +515,14 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+        /** old promotional material */
         case 'skyforge':
             bot.action(channel, `Sponsored: Skyforge, a beautiful, MMORPG game with awesome grinding and battles. Think it looks fun? Check it out here: https://wehy.pe/3/birdofchess`);
             break;
 
-        case 'shoutout': {
+        /** shoutout a twitch streamer */
+        case 'shoutout':
+        case 'so': {
             if (isMod(userstate)) {
                 if ((typeof cdr[0] === 'string') && (cdr[0].length > 0)) {
                     const shoutout = await api.messages.shoutout(cdr[0]);
@@ -556,6 +534,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             break;
         }
 
+        /** manually update user's token balance */
         case 'update-balance': {
             if (isMod(userstate)) {
                 const [username, action, amount] = cdr;
@@ -571,6 +550,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             break;
         }
 
+        /** manually update a user's ticket balance */
         case 'update-wallet': {
             if (isMod(userstate)) {
                 const [username, action, type, amount] = cdr;
@@ -589,6 +569,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             break;
         }
 
+        /** destroy all tickets */
         case '__danger__purge__wallets__': {
             if (userstate.username === 'bebop_bebop' && isMod(userstate)) {
                 const result = api.__danger.__purge__wallets__();

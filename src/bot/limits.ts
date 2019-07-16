@@ -44,6 +44,7 @@ const limits: SNMap = {
     roll: second10,
     shame: second30,
     shametoken: second30,
+    shoutout: 0,
     spicybalance: 0,
     startrequests: 0,
     startstream: 0,

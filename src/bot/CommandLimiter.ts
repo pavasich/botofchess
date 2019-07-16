@@ -1,30 +1,36 @@
-type SNMap = {
-    [key: string]: number
-}
-type UserCollection = {
-    [key: string]: SNMap
-}
+type SNMap = Record<string, number>;
+type UserCollection = Record<string, SNMap>;
+
 
 export default class CommandLimiter {
-    collection: UserCollection = {};
-    timeouts: SNMap;
+    private collection: UserCollection = {};
 
-    constructor(timeouts:SNMap) {
+    public readonly timeouts: SNMap;
+
+
+    public constructor(timeouts:SNMap) {
         this.timeouts = timeouts;
     }
 
-    enforce = (dirtyUser: DirtyUser, command: string): boolean => {
+
+    public enforce(dirtyUser: DirtyUser, command: string): boolean {
         const now = Date.now();
         const name = dirtyUser['display-name'];
         if (this.collection[name] === undefined) {
             this.collection[name] = {};
         }
+
         const history = this.collection[name];
+
         if (history[command] === undefined) {
             history[command] = now;
             return false;
         }
-        if (this.timeouts[command] === undefined) return false;
+
+        if (this.timeouts[command] === undefined) {
+            return false;
+        }
+
         if ((now - history[command]) > this.timeouts[command]) {
             history[command] = now;
             return false;
