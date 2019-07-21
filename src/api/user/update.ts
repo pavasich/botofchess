@@ -1,11 +1,12 @@
 import { sanitizeDirtyUser } from '../../models/User';
-import db, { MODELS } from '../../db';
+import db from '../../db';
+import { Model } from '../../db/db-constants';
 import exists from './exists';
 
 const update = (user: User): boolean => {
     try {
         if (exists(user)) {
-            db.get(MODELS.USER).get(user.id).assign(user).set('lastUpdated', Date.now()).write();
+            db.get(Model.User).get(user.id).assign(user).set('lastUpdated', Date.now()).write();
             return true;
         }
     } catch (e) {

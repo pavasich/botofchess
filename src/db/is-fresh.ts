@@ -1,6 +1,5 @@
 import Message from '../api/message';
-import Data from '../models/Data';
-import { STATUSES } from './db-constants';
+import { Status } from './db-constants';
 
 const minute = 1000 * 60;
 const minutesUntilStale = 10;
@@ -15,8 +14,8 @@ export default (data: Data): Message => {
         return {
             code: 200,
             status: isFresh(data.lastUpdated)
-                ? STATUSES.FRESH
-                : STATUSES.STALE,
+                ? Status.Fresh
+                : Status.Stale,
         };
     }
     return {

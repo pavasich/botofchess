@@ -1,8 +1,9 @@
 import { sanitizeDirtyUser } from '../../models/User';
-import db, { MODELS } from '../../db';
+import db from '../../db';
+import { Model } from '../../db/db-constants';
 
 const exists = (user: User): boolean =>
-    db.get(MODELS.USER).get(user.id).value() !== undefined;
+    db.get(Model.User).get(user.id).value() !== undefined;
 
 export const dirtyUserExists = (dirtyUser: DirtyUser): boolean =>
     exists(sanitizeDirtyUser(dirtyUser));

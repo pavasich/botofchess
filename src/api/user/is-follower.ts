@@ -3,7 +3,7 @@ import Message from '../message';
 import exists from './exists';
 import db from '../../db';
 import isFresh from '../../db/is-fresh';
-import { STATUSES, MODELS } from '../../db/db-constants';
+import { Status, Model } from '../../db/db-constants';
 import { channel_id } from '../../bot/globals';
 
 const verifyFollowerUrl = (userId: string|number) =>
@@ -13,7 +13,7 @@ export default async (user: User): Promise<Message> => {
     if (exists(user)) {
         if (user.isFollower !== undefined) {
             const freshness: Message = isFresh(user);
-            if (freshness.status === STATUSES.FRESH) {
+            if (freshness.status === Status.Fresh) {
                 return <Message>{
                     code: 200,
                     status: user.isFollower,
@@ -24,10 +24,10 @@ export default async (user: User): Promise<Message> => {
             method: 'GET'
         });
         const isFollower = response.status === 404
-            ? STATUSES.IS_FOLLOWER
-            : STATUSES.NOT_FOLLOWER;
+            ? Status.Is_Follower
+            : Status.Not_Follower;
         db
-            .get(MODELS.USER)
+            .get(Model.User)
             .get(user.id)
             .set('isFollower', isFollower)
             .set('lastUpdated', Date.now())

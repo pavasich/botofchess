@@ -1,7 +1,7 @@
-import { MODELS } from '../db-constants';
+import { Model } from '../db-constants';
 
 export default {
-    [MODELS.SHAME_QUOTE]: [
+    [Model.Shame_Quote]: [
         '"The Rooks that the world calls immoral are Rooks that show the world its own shame." - Oscar Wilde',
         '"Before there is victory, there is always shame."',
         '"I never learned shame at home. I had to go to Rook for that." - Dick Gregory',

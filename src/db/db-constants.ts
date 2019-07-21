@@ -1,18 +1,26 @@
-export const MODELS = {
-    USER: 'User',
-    SHAME: 'Shame',
-    CURRENCY: 'Currency',
-    TICKETS: 'Tickets',
-    SHAME_QUOTE: 'Shame_Quote',
-    DONOR_QUOTE: 'Donor_Quote',
-    QUOTE: 'Quote',
-    LOG: 'Log',
-    WORD: 'Word',
-};
+export enum Model {
+    User = 'User',
+    Shame = 'Shame',
+    Currency = 'Currency',
+    Tickets = 'Tickets',
+    Shame_Quote = 'Shame_Quote',
+    Donor_Quote = 'Donor_Quote',
+    Quote = 'Quote',
+    Log = 'Log',
+    Word = 'Word',
+    Channel_Event = 'Channel_Event'
+}
 
-export const STATUSES = {
-    FRESH: 'fresh',
-    STALE: 'stale',
-    IS_FOLLOWER: 'isfollower',
-    NOT_FOLLOWER: 'notfollower',
-};
+export enum STATUSES {
+    FRESH = 'fresh',
+    STALE = 'stale',
+    IS_FOLLOWER = 'isfollower',
+    NOT_FOLLOWER = 'notfollower',
+}
+
+export enum Status {
+    Fresh = 'fresh',
+    Stale = 'stale',
+    Is_Follower = 'isfollower',
+    Not_Follower = 'notfollower',
+}

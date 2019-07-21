@@ -1,11 +1,12 @@
+import db from '../../db';
+import { Model } from '../../db/db-constants';
+
 interface Word {
     count: number
     users: {
         [key: string]: number
     }
 }
-
-import db, { MODELS } from '../../db';
 
 const sanitizer = /([^\w\d\s!'\-]+)/gi;
 
@@ -14,7 +15,7 @@ export default ({ username }: DirtyUser, message: string) => {
         .replace(sanitizer, '')
         .split(' ');
     for (let i = 0, n = tokens.length; i < n; i++) {
-        let current: Word = db.get(MODELS.WORD).get(tokens[i]).value();
+        let current: Word = db.get(Model.Word).get(tokens[i]).value();
         if (current === undefined) {
             current = {
                 count: 0,
@@ -24,7 +25,7 @@ export default ({ username }: DirtyUser, message: string) => {
             };
         }
         db
-            .get(MODELS.WORD)
+            .get(Model.Word)
             .set(tokens[i], {
                 count: current.count + 1,
                 users: {

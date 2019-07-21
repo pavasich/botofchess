@@ -1,4 +1,5 @@
-import db, { MODELS } from '../../db';
+import db from '../../db';
+import { Model } from '../../db/db-constants';
 
 export enum BalanceAction {
     inc = 'inc',
@@ -20,13 +21,13 @@ function modify(action: BalanceAction, a: number, b: number) {
 }
 
 export function updateBalance(username: string, action: BalanceAction, quantity: number) {
-    const balance = db.get(MODELS.CURRENCY).get(username).value();
+    const balance = db.get(Model.Currency).get(username).value();
     if (balance === undefined) {
         return 'Error: Not Found';
     }
     const result = modify(action, parseInt(balance, 10), quantity);
     if (typeof result === 'number') {
-        db.get(MODELS.CURRENCY).set(username, modify(action, balance, quantity)).write();
+        db.get(Model.Currency).set(username, modify(action, balance, quantity)).write();
         return result;
     }
     return result;

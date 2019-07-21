@@ -1,5 +1,6 @@
 import { sanitizeDirtyUser } from '../../models/User';
-import db, { MODELS } from '../../db';
+import db from '../../db';
+import { Model } from '../../db/db-constants';
 import exists from './exists';
 
 const create = (user: User): boolean => {
@@ -10,7 +11,7 @@ const create = (user: User): boolean => {
             lastUpdated: Date.now(),
         };
         db
-            .get(MODELS.USER)
+            .get(Model.User)
             .set(newUser.id, newUser)
             .write();
         return true;

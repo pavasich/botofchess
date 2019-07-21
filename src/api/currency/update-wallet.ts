@@ -1,4 +1,5 @@
-import db, { MODELS } from '../../db';
+import db from '../../db';
+import { Model } from '../../db/db-constants';
 import { findUserByUserName } from '../user/find-by-username';
 
 export enum BalanceAction {
@@ -26,7 +27,7 @@ export function updateWallet(username: string, action: BalanceAction, type: keyo
         return `404::${username}`;
     }
 
-    const wallet = db.get(MODELS.TICKETS).get(user.id).value() as Store;
+    const wallet = db.get(Model.Tickets).get(user.id).value() as Store;
     if (wallet === undefined) {
         return `404::${username} -> wallet`;
     }
@@ -34,7 +35,7 @@ export function updateWallet(username: string, action: BalanceAction, type: keyo
     const result = modify(action, wallet[type], quantity);
 
     if (typeof result === 'number') {
-        db.get(MODELS.TICKETS).get(user.id).set(type, result).write();
+        db.get(Model.Tickets).get(user.id).set(type, result).write();
         return `200::${username}.wallet.${type}=${result}`;
     }
 

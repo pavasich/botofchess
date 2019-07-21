@@ -1,5 +1,5 @@
-import { MODELS } from '../db-constants';
+import { Model } from '../db-constants';
 
 export default {
-    [MODELS.WORD]: {},
+    [Model.Word]: {},
 };

@@ -1,5 +1,6 @@
-import db, { MODELS } from '../db';
+import db from '../db';
+import { Model } from '../db/db-constants';
 
 export default (message: string) => {
-    db.get(MODELS.LOG).push(message).write();
+    db.get(Model.Log).push(message).write();
 };

@@ -1,4 +1,5 @@
-import db, { MODELS } from '../../db';
+import db from '../../db';
+import { Model } from '../../db/db-constants';
 import { getBalanceForDirtyUser, decrementBalanceForDirtyUser } from './balance';
 import { sanitizeDirtyUser } from '../../models/User';
 
@@ -20,9 +21,9 @@ export default (dirtyUser: DirtyUser, amount: number, item: keyof Store) => {
         if (prices[item] !== undefined && availableForPurchase.has(item)) {
             const request = amount * prices[item];
             if (request <= balance) {
-                if (db.get(MODELS.TICKETS).get(user.id).value() === undefined) {
+                if (db.get(Model.Tickets).get(user.id).value() === undefined) {
                     db
-                        .get(MODELS.TICKETS)
+                        .get(Model.Tickets)
                         .set(user.id, {
                             ffxiv: 0,
                             gw2: 0,
@@ -30,12 +31,12 @@ export default (dirtyUser: DirtyUser, amount: number, item: keyof Store) => {
                         } as Store)
                         .write();
                 }
-                const bank: Store = db.get(MODELS.TICKETS).get(user.id).value();
+                const bank: Store = db.get(Model.Tickets).get(user.id).value();
                 let current: number = bank[item];
                 if (current === undefined) {
                     current = 0;
                 }
-                db.get(MODELS.TICKETS).get(user.id).set(item, current + amount).write();
+                db.get(Model.Tickets).get(user.id).set(item, current + amount).write();
                 decrementBalanceForDirtyUser(dirtyUser, request);
                 const s = current + amount === 1
                     ? ''

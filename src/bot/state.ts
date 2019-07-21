@@ -1,7 +1,6 @@
 import CommandLimiter from './CommandLimiter';
 import limits from './limits';
 
-
 export enum Prop {
     enableEvent = 'enableEvent',
     rateLimit = 'rateLimit',
@@ -18,13 +17,13 @@ export enum Prop {
 }
 
 export interface AppState {
-    [Prop.enableEvent]: boolean;
-    [Prop.rateLimit]: CommandLimiter;
     [Prop.broadcasting]: boolean;
     [Prop.chatterInterval]: NodeJS.Timer|null;
     [Prop.chatters]: Array<string>;
+    [Prop.enableEvent]: boolean;
     [Prop.enableLogging]: boolean;
     [Prop.eventInterval]: NodeJS.Timer|null;
+    [Prop.rateLimit]: CommandLimiter;
     [Prop.startTime]: number|void;
     [Prop.subsonly]: boolean;
     [Prop.tricking]: boolean;
@@ -34,13 +33,13 @@ export interface AppState {
 
 function getDefaultState(): AppState {
     return {
-        [Prop.enableEvent]: false,
-        [Prop.rateLimit]: new CommandLimiter(limits),
         [Prop.broadcasting]: false,
         [Prop.chatterInterval]: null,
         [Prop.chatters]: [],
+        [Prop.enableEvent]: true,
         [Prop.enableLogging]: false,
         [Prop.eventInterval]: null,
+        [Prop.rateLimit]: new CommandLimiter(limits),
         [Prop.startTime]: undefined,
         [Prop.subsonly]: false,
         [Prop.tricking]: false,

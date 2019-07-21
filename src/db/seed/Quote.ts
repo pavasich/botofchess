@@ -1,7 +1,7 @@
-import { MODELS } from '../db-constants';
+import { Model } from '../db-constants';
 
 export default {
-    [MODELS.QUOTE]: [
+    [Model.Quote]: [
         [
             "I'm gonna stop putting weird dirty stuff in my mouth.",
             'Rook',

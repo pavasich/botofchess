@@ -352,9 +352,12 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
+
+        /** enable event currency */
+
         /** description of the current event */
         case 'event':
-            say(`Nothing for now!`);
+            say(`It's the Beach Birds giveaway! Visit http://bit.ly/beach-birds for more details!`);
             break;
 
         /** display user's current ticket & token balance */

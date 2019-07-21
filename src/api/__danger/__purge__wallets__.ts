@@ -1,4 +1,5 @@
-import db, { MODELS } from '../../db';
+import db from '../../db';
+import { Model } from '../../db/db-constants';
 
 function emptyStore(): Store {
     return {
@@ -10,8 +11,8 @@ function emptyStore(): Store {
 
 export function __purge__wallets__() {
     try {
-        db.get(MODELS.TICKETS).keys().forEach(function (key) {
-            db.get(MODELS.TICKETS).set(key, emptyStore()).write();
+        db.get(Model.Tickets).keys().forEach(function (key) {
+            db.get(Model.Tickets).set(key, emptyStore()).write();
         }).write();
         return '200::Everything is gone. The world is barren. What have I done.'
     } catch (e) {

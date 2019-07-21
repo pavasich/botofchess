@@ -1,5 +1,5 @@
-import { MODELS } from '../db-constants';
+import { Model } from '../db-constants';
 
 export default {
-    [MODELS.SHAME]: 496,
+    [Model.Shame]: 496,
 };

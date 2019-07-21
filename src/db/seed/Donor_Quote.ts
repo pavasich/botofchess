@@ -1,7 +1,7 @@
-import { MODELS } from '../db-constants';
+import { Model } from '../db-constants';
 
 export default {
-    [MODELS.DONOR_QUOTE]: [
+    [Model.Donor_Quote]: [
         [
             'Angela stepped back, pulling off her jade scrubs. She tousled her soft, blonde hair, and revealed the tantalizing lingerie beneath: blush pink lace and silk that exposed the delicacy of her pale breasts.',
             'Bebop',
