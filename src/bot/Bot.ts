@@ -27,6 +27,13 @@ setState({
     chatterInterval: setInterval(getChatters, t.minute5)
 });
 
+async function distribute() {
+    await api.actions.distributeCurrency(state.chatters, state.subsonly);
+    bot.action(
+        data_channel,
+        `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
+    );
+}
 
 /** start & end stream */
 function startStream(userstate: DirtyUser) {
@@ -38,21 +45,17 @@ function startStream(userstate: DirtyUser) {
             });
         }
 
+        const chatterInterval = setInterval(fetchChatters, t.minute5);
         setState({
-            chatterInterval: setInterval(fetchChatters, t.minute5),
+            chatterInterval,
             broadcasting: true,
             startTime: Date.now(),
         });
 
         if (state.enableEvent) {
+            const eventInterval = setInterval(distribute, t.minute20);
             setState({
-                eventInterval: setInterval(() => {
-                    api.actions.distributeCurrency(state.chatters, state.subsonly);
-                    bot.action(
-                        data_channel,
-                        `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
-                    );
-                }, t.minute20)
+                eventInterval,
             });
         }
         bot.action(data_channel, 'Hamlo >D');
@@ -149,7 +152,7 @@ bot.on('connected', function() {
  * @param {string} name
  */
 function goHome(name: string) {
-    if (name === 'serbosaurus' || name === data_channel) {
+    if (name === 'bebop_bebop' || name === data_channel) {
         bot.action(data_channel, 'no, im not ready to go...');
         bot.disconnect();
     } else {
