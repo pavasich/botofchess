@@ -1,10 +1,12 @@
 import db from '../../db';
 import { Model } from '../../db/db-constants';
 import { searchEveryoneForUser } from '../../models/User';
+import { fetchChatters } from '../user/fetch-chatters';
 
 let multiplier = 1;
 
-export default async (chatters: Array<string>, subsonly: boolean) => {
+export default async (subsonly: boolean = false) => {
+    const chatters = await fetchChatters();
     let all = [];
     if (subsonly) {
         const everyone = db.get(Model.User).values().value();

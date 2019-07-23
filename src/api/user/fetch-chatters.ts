@@ -1,4 +1,5 @@
 import { channel } from '../../bot/globals';
+import { t } from '../../bot/util';
 
 interface ChattersResponse {
     chatters: {
@@ -12,34 +13,45 @@ interface ChattersResponse {
     };
 }
 
+let memo: string[] = [];
+let last = 0;
+
 export async function fetchChatters() {
-    console.log('fetching chatters...');
-    const response = await fetch(`https://tmi.twitch.tv/group/user/${channel}/chatters`, { method: 'GET' });
-    if (response.ok) {
-        const json = await response.json() as ChattersResponse;
-        console.log('got chatters:', json);
+    const now = Date.now();
+    if ((now - last) > t.minute2) {
+        console.log('fetching chatters...');
+        const response = await fetch(`https://tmi.twitch.tv/group/user/${channel}/chatters`, { method: 'GET' });
+        if (response.ok) {
+            last = now;
 
-        const {
-            chatters: {
-                admins,
-                broadcaster,
-                global_mods,
-                moderators,
-                staff,
-                viewers,
-                vips,
-            },
-        } = json;
+            const json = await response.json() as ChattersResponse;
+            console.log('got chatters:', json);
 
-       return [
-            ...admins,
-            ...broadcaster,
-            ...global_mods,
-            ...moderators,
-            ...staff,
-            ...viewers,
-            ...vips,
-        ];
+            const {
+                chatters: {
+                    admins,
+                    broadcaster,
+                    global_mods,
+                    moderators,
+                    staff,
+                    viewers,
+                    vips,
+                },
+            } = json;
+
+            memo = [
+                ...admins,
+                ...broadcaster,
+                ...global_mods,
+                ...moderators,
+                ...staff,
+                ...viewers,
+                ...vips,
+            ];
+        }
+    } else {
+        console.log(`reusing cached response (${(now - last) / 1000} seconds old)`);
     }
-    return [];
+
+    return memo;
 }

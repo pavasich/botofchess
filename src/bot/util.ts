@@ -12,6 +12,7 @@ export const t = {
     second2: second(2),
     second4: second(4),
     second30: second(30),
+    minute2: minute(2),
     minute5: minute(5),
     minute20: minute(20),
 };

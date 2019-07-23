@@ -14,21 +14,9 @@ import { isMod, t } from './util';
 import { setState, state } from './state';
 import { fetchChatters } from '../api/user/fetch-chatters';
 
-async function getChatters() {
-    const chatters = await fetchChatters();
-    setState({
-        chatters,
-    });
-}
-
-getChatters();
-
-setState({
-    chatterInterval: setInterval(getChatters, t.minute5)
-});
-
 async function distribute() {
-    await api.actions.distributeCurrency(state.chatters, state.subsonly);
+    const chatters = await fetchChatters();
+    await api.actions.distributeCurrency(chatters, state.subsonly);
     bot.action(
         data_channel,
         `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
@@ -38,16 +26,7 @@ async function distribute() {
 /** start & end stream */
 function startStream(userstate: DirtyUser) {
     if (isMod(userstate)) {
-        if (state.chatterInterval !== null) {
-            clearInterval(state.chatterInterval as NodeJS.Timer);
-            setState({
-                chatterInterval: null,
-            });
-        }
-
-        const chatterInterval = setInterval(fetchChatters, t.minute5);
         setState({
-            chatterInterval,
             broadcasting: true,
             startTime: Date.now(),
         });
@@ -74,13 +53,6 @@ function endStream(userstate: DirtyUser) {
             setState({
                 eventInterval: null,
             })
-        }
-
-        if (state.chatterInterval !== null) {
-            clearInterval(state.chatterInterval);
-            setState({
-                chatterInterval: null,
-            });
         }
 
         bot.action(data_channel, 'Gooooooooooooobie!');
@@ -181,10 +153,6 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
     if (state.enableLogging) {
         api.word.saveWords(userstate, message);
-    }
-
-    if (state.usernameSet !== undefined) {
-        state.usernameSet.add(userstate.username);
     }
 
     let sillything = [];
@@ -452,7 +420,8 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** give everyone tokens for stuff */
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
-                await api.actions.distributeCurrency(state.chatters, state.subsonly);
+                const chatters = await fetchChatters();
+                await api.actions.distributeCurrency(chatters, state.subsonly);
                 bot.action(channel, 'ok!');
             } else {
                 bot.action(channel, 'lol nty');
