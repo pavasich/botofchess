@@ -18,7 +18,7 @@ let last = 0;
 
 export async function fetchChatters() {
     const now = Date.now();
-    if ((now - last) > t.minute2) {
+    if ((now - last) > t.second30) {
         console.log('fetching chatters...');
         const response = await fetch(`https://tmi.twitch.tv/group/user/${channel}/chatters`, { method: 'GET' });
         if (response.ok) {

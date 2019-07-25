@@ -12,11 +12,9 @@ import { channel as data_channel } from './globals';
 import limits from './limits';
 import { isMod, t } from './util';
 import { setState, state } from './state';
-import { fetchChatters } from '../api/user/fetch-chatters';
 
 async function distribute() {
-    const chatters = await fetchChatters();
-    await api.actions.distributeCurrency(chatters, state.subsonly);
+    await api.actions.distributeCurrency(state.subsonly);
     bot.action(
         data_channel,
         `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
@@ -420,8 +418,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** give everyone tokens for stuff */
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
-                const chatters = await fetchChatters();
-                await api.actions.distributeCurrency(chatters, state.subsonly);
+                await api.actions.distributeCurrency(state.subsonly);
                 bot.action(channel, 'ok!');
             } else {
                 bot.action(channel, 'lol nty');
