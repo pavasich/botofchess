@@ -18,7 +18,7 @@ const prodConfig = (config) => ({
   },
   plugins: [
     new ExtractTextPlugin({
-      filename: `css/[name][hash].css`,
+      filename: `css/[name].css`,
       allChunks: true,
     }),
   ],
@@ -58,8 +58,8 @@ const base = (config) => ({
     path: config.paths.build,
     publicPath: './',
     pathinfo: isDev,
-    filename: `[name].[hash].js`,
-    chunkFilename: 'c[name].[chunkhash].js',
+    filename: `[name].js`,
+    chunkFilename: 'c[name].js',
   },
   resolve: {
     modules: [

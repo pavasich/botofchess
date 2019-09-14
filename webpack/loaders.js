@@ -29,7 +29,7 @@ const cssLoader = () => {
   }
   return {
     test: /\.s?css$/,
-    exclude: /node_modules\/(?!(rc-slider|rc-tooltip)\/).*/,
+    exclude: /node_modules\/.*/,
     use: [
       'style-loader',
       'css-loader',

@@ -1,3 +1,5 @@
+import { isMod } from './util';
+
 type SNMap = Record<string, number>;
 type UserCollection = Record<string, SNMap>;
 
@@ -14,6 +16,10 @@ export default class CommandLimiter {
 
 
     public enforce(dirtyUser: DirtyUser, command: string): boolean {
+        if (isMod(dirtyUser)) {
+            return true;
+        }
+
         const now = Date.now();
         const name = dirtyUser['display-name'];
         if (this.collection[name] === undefined) {
@@ -35,6 +41,7 @@ export default class CommandLimiter {
             history[command] = now;
             return false;
         }
+
         return true;
     }
 }
