@@ -497,8 +497,8 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         case 'so': {
             if (isMod(userstate)) {
                 if ((typeof cdr[0] === 'string') && (cdr[0].length > 0)) {
-                    const shoutout = await api.messages.shoutout(cdr[0]);
-                    if (typeof shoutout === 'string') {
+                    const shoutout = api.messages.shoutout(cdr[0]);
+                    if (shoutout !== undefined) {
                         bot.action(channel, shoutout);
                     }
                 }

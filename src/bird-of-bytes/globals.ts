@@ -1,7 +1,6 @@
-import { password } from './secrets';
+import { password } from '../bot/secrets';
 
 export const channel: string = 'birdofchess';
-export const channel_id: number = 142204178;
 
 export const options: object = {
   options: {
@@ -17,5 +16,3 @@ export const options: object = {
   },
   channels: [`#${channel}`],
 };
-
-export const coin_sides: Array<string> = ['heads', 'tails'];

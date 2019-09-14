@@ -16,9 +16,9 @@ interface ChattersResponse {
 let memo: string[] = [];
 let last = 0;
 
-export async function fetchChatters() {
+export async function fetchChatters(noCache: boolean = false) {
     const now = Date.now();
-    if ((now - last) > t.second30) {
+    if (noCache || (now - last) > t.second30) {
         console.log('fetching chatters...');
         const response = await fetch(`https://tmi.twitch.tv/group/user/${channel}/chatters`, { method: 'GET' });
         if (response.ok) {
