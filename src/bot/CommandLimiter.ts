@@ -17,7 +17,7 @@ export default class CommandLimiter {
 
     public enforce(dirtyUser: DirtyUser, command: string): boolean {
         if (isMod(dirtyUser)) {
-            return true;
+            return false;
         }
 
         const now = Date.now();
