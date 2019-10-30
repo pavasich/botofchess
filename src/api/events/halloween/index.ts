@@ -26,9 +26,7 @@ export function trick_or_treat(treatOverride: boolean = false) {
     while (p === 0) {
         p = Math.random();
     }
-    if (treatOverride) {
-        prize = super_rare[0];
-    } else if (p <= 0.02) {
+    if (treatOverride || p <= 0.02) {
         prize = pick(super_rare);
     } else {
         prize = pick(standard);

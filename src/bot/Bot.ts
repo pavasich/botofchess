@@ -13,6 +13,7 @@ import limits from './limits';
 import { isMod, t } from './util';
 import { setState, getState } from './state';
 import run from '../api/events/halloween/run';
+import { minute } from '../util/time-expand';
 
 
 async function distribute() {
@@ -31,7 +32,7 @@ function startStream(userstate: DirtyUser) {
             startTime: Date.now(),
         });
 
-        const eventInterval = setInterval(() => run(data_channel, bot, speak), t.minute20);
+        const eventInterval = setInterval(() => run(data_channel, bot, speak), minute(12));
         setState({
             eventInterval,
         });

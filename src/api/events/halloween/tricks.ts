@@ -18,6 +18,6 @@ export const standard = [
 
 
 export const super_rare = [
-    'TREAT!!!',
+    'TREAT: A random game key!!!',
+    'TREAT: Your choice of GW2 or FFXIV item/gem code!!!',
 ];
-
