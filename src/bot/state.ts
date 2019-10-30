@@ -27,7 +27,7 @@ export interface AppState {
 function getDefaultState(): AppState {
     return {
         [Prop.broadcasting]: false,
-        [Prop.enableEvent]: true,
+        [Prop.enableEvent]: false,
         [Prop.enableLogging]: false,
         [Prop.eventInterval]: null,
         [Prop.rateLimit]: new CommandLimiter(limits),
@@ -37,7 +37,11 @@ function getDefaultState(): AppState {
     };
 }
 
-export const state = getDefaultState();
+let state = getDefaultState();
+
+export function getState() {
+    return state;
+}
 
 export function setState(newState: Partial<AppState>) {
    Object.assign(state, newState);

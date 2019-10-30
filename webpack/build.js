@@ -12,37 +12,41 @@ const loaders = require('./loaders');
 const isProd = process.env.NODE_ENV === 'production';
 const isDev = !isProd;
 
-const prodConfig = (config) => ({
-  entry: {
-    main: [config.paths.entryFile],
-  },
-  plugins: [
-    new ExtractTextPlugin({
-      filename: `css/[name].css`,
-      allChunks: true,
-    }),
-  ],
-});
+function prodConfig(config) {
+  return {
+    entry: {
+      main: [config.paths.entryFile],
+    },
+    plugins: [
+      new ExtractTextPlugin({
+        filename: `css/[name].css`,
+        allChunks: true,
+      }),
+    ],
+  };
+}
 
-const devConfig = (config) => ({
-  watch: true,
-  entry: {
-    main: [config.paths.entryFile],
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new WriteFilePlugin(),
-  ],
-  devtool: 'cheap-module-source-map',
-  devServer: {
-    contentBase: config.paths.build,
-    inline: true,
-    hot: true,
-    publicPath: config.paths.assetPath,
-  },
-});
+function devConfig(config) {
+  return {
+    watch: true,
+    entry: {
+      main: [config.paths.entryFile],
+    },
+    plugins: [
+      new webpack.HotModuleReplacementPlugin(),
+      new WriteFilePlugin(),
+    ],
+    devtool: 'cheap-module-source-map',
+    devServer: {
+      contentBase: config.paths.build,
+      inline: true,
+      hot: true,
+      publicPath: config.paths.assetPath,
+    },
+  };
+}
 
-const configByEnv = (config) => {
+function configByEnv(config) {
   if (isDev) {
     return devConfig(config);
   }
@@ -50,33 +54,35 @@ const configByEnv = (config) => {
     return prodConfig(config);
   }
   throw new Error(`Unknown NODE_ENV`);
-};
+}
 
-const base = (config) => ({
-  target: 'web',
-  output: {
-    path: config.paths.build,
-    publicPath: './',
-    pathinfo: isDev,
-    filename: `[name].js`,
-    chunkFilename: 'c[name].js',
-  },
-  resolve: {
-    modules: [
-      config.paths.appRoot,
-      path.resolve(__dirname, '../node_modules'),
+function base(config) {
+  return {
+    target: 'web',
+    output: {
+      path: config.paths.build,
+      publicPath: './',
+      pathinfo: isDev,
+      filename: `[name].js`,
+      chunkFilename: 'c[name].js',
+    },
+    resolve: {
+      modules: [
+        config.paths.appRoot,
+        path.resolve(__dirname, '../node_modules'),
+      ],
+      extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.json'],
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        title: 'birdofbytes',
+        filename: 'index.html',
+        template: config.paths.template,
+        inject: true,
+      }),
     ],
-    extensions: ['.tsx', '.ts', '.jsx', '.js', '.scss', '.json'],
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: 'birdofbytes',
-      filename: 'index.html',
-      template: config.paths.template,
-      inject: true,
-    }),
-  ],
-});
+  };
+}
 
 module.exports.configureWebpack = (config) => merge(
   base(config),

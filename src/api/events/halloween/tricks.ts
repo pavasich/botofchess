@@ -4,7 +4,7 @@ export const standard = [
     'Rook has to praise Choya ERP.',
     'Story time! Rook will read aloud a short spooky ghost story at the next break.',
     'Joke time! Rook will tell you a terrible joke.',
-    'Meme! Rook will watch a video of your choice and react on stream. Nothing gross, mbebees.',
+    'Rook will watch a video of your choice and react on stream. Nothing gross, mbebees.',
     'Rook games in the dark with only a flashlight for 5 minutes!',
     'Good Egg. You\'ll be assigned the special discord role "Good Egg"',
     'Song Request! Rook will queue up a song of your choice.',

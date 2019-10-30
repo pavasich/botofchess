@@ -2,7 +2,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const PRODUCTION = process.env.NODE_ENV === 'production';
 
-const cssLoader = () => {
+function cssLoader() {
   if (PRODUCTION) {
     return {
       test: /\.s?css$/,
@@ -47,7 +47,7 @@ const cssLoader = () => {
       'sass-loader',
     ],
   };
-};
+}
 
 const assetLoaders = [
   {

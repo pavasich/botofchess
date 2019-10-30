@@ -11,10 +11,12 @@ import bot from './client';
 import { channel as data_channel } from './globals';
 import limits from './limits';
 import { isMod, t } from './util';
-import { setState, state } from './state';
+import { setState, getState } from './state';
+import run from '../api/events/halloween/run';
+
 
 async function distribute() {
-    await api.actions.distributeCurrency(state.subsonly);
+    await api.actions.distributeCurrency(getState().subsonly);
     bot.action(
         data_channel,
         `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
@@ -29,12 +31,10 @@ function startStream(userstate: DirtyUser) {
             startTime: Date.now(),
         });
 
-        if (state.enableEvent) {
-            const eventInterval = setInterval(distribute, t.minute20);
-            setState({
-                eventInterval,
-            });
-        }
+        const eventInterval = setInterval(() => run(data_channel, bot, speak), t.minute20);
+        setState({
+            eventInterval,
+        });
         bot.action(data_channel, 'Hamlo >D');
     }
 }
@@ -46,8 +46,8 @@ function endStream(userstate: DirtyUser) {
             startTime: undefined,
         });
 
-        if (state.eventInterval !== null) {
-            clearInterval(state.eventInterval);
+        if (getState().eventInterval !== null) {
+            clearInterval(getState().eventInterval);
             setState({
                 eventInterval: null,
             })
@@ -59,7 +59,7 @@ function endStream(userstate: DirtyUser) {
 
 
 function logAction(userstate: DirtyUser, string: string) {
-    if (state.enableLogging) {
+    if (getState().enableLogging) {
         api.log(`INFO::${userstate['display-name']}::${string}::${(new Date()).toJSON()}`);
     }
 }
@@ -144,7 +144,7 @@ function getWinner() {
 async function commands(channel: string, userstate: DirtyUser, message: string, self: boolean) {
     if (self) return;
     api.user.dirty.upsert(userstate);
-
+    const state = getState();
     if (state.broadcasting && state.tricking) {
         api.events.halloween.handleMessage(userstate);
     }
@@ -322,11 +322,9 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             break;
 
 
-        /** enable event currency */
-
         /** description of the current event */
         case 'event':
-            say(`It's the Beach Birds giveaway! Visit http://bit.ly/beach-birds for more details!`);
+            say(`IT SPOOK TIME`);
             break;
 
         /** display user's current ticket & token balance */
@@ -460,6 +458,14 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                         });
                     }
                 }
+            }
+            break;
+
+
+        /** give away something spooky to chatters */
+        case 'treat':
+            if (isMod(userstate)) {
+                run(data_channel, bot, speak, true);
             }
             break;
 
