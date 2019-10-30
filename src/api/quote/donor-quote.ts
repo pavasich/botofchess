@@ -1,5 +1,5 @@
 import { donor } from './source/donor';
-import { pickRand } from '../../util/arrays';
+import { pick } from '../../util/arrays';
 
-export const getRandomDonorQuote = () => pickRand(donor);
+export const getRandomDonorQuote = () => pick(donor);
 

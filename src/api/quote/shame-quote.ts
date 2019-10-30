@@ -1,5 +1,5 @@
 import { shame } from './source/shame';
-import { pickRand } from '../../util/arrays';
+import { pick } from '../../util/arrays';
 
-export const getRandomShameQuote = () => pickRand(shame);
+export const getRandomShameQuote = () => pick(shame);
 

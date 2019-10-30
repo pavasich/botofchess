@@ -1,4 +1,4 @@
-import { pickRand } from '../../util/arrays';
+import { pick } from '../../util/arrays';
 import { second } from '../../util/time-expand';
 
 const users = new Set();
@@ -7,7 +7,7 @@ const delayTime = second(50);
 export const start = (callback: (s: string) => void) => {
     users.clear();
     setTimeout(() => {
-        callback(pickRand([...users]));
+        callback(pick([...users]));
     }, delayTime);
 };
 

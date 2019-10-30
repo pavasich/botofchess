@@ -1,5 +1,5 @@
 import { quotes } from './source/quote';
-import { pickRand } from '../../util/arrays';
+import { pick } from '../../util/arrays';
 
-export const getRandomQuote = () => pickRand(quotes);
+export const getRandomQuote = () => pick(quotes);
 

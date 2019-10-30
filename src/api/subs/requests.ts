@@ -1,4 +1,4 @@
-import { pickRand } from '../../util/arrays';
+import { pick } from '../../util/arrays';
 
 const winners = new Set();
 const requesters = new Set();
@@ -36,7 +36,7 @@ export const pickWinner = () => {
     const array = requesters.size > 0
       ? [...requesters]
       : [...winners];
-    const winner = pickRand(array);
+    const winner = pick(array);
     console.log(winner);
     winners.add(winner);
     console.log(winner, requests[winner]);

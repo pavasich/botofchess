@@ -1,7 +1,9 @@
 import { second } from '../../../util/time-expand';
 import Monologue from '../../../models/Monologue';
 import { setState } from '../../../bot/state';
+import { pick } from '../../../util/arrays';
 import { trick_or_treat, clear } from '.'
+
 const comments = [
     'Well aren\'t you adorable!',
     'What are you supposed to be...?',
@@ -25,15 +27,12 @@ const comments = [
 
 const second30 = second(30);
 
-function pick() {
-    return comments[Math.floor(Math.random() * comments.length)];
-}
 export default (channel: string, bot: any, speakingFunction: (m: Monologue) => void, forceTreat: boolean = false) => {
     setState({
         tricking: true,
     });
     bot.action(channel, 'hears you knocking.');
-    bot.action(channel, `${pick()} (chat within 30s to be eligible for a ${forceTreat ? 'treat' : 'trick'})`);
+    bot.action(channel, `${pick(comments)} (chat within 30s to be eligible for a ${forceTreat ? 'treat' : 'trick'})`);
     setTimeout(() => {
         speakingFunction(trick_or_treat(forceTreat));
         clear();

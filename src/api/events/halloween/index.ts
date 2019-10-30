@@ -1,21 +1,18 @@
 import Monologue from '../../../models/Monologue';
 import * as z from './tricks';
+import { pick } from '../../../util/arrays';
 
 const standard = [...z.standard];
-const rare = [...z.rare];
 const super_rare = [...z.super_rare];
 
-function pick(array: Array<any>) {
-    return array[Math.floor(Math.random() * array.length)];
-}
+const visitors = new Set();
 
-let visitors = new Set();
 export function handleMessage(userstate: DirtyUser) {
     visitors.add(userstate.username);
 }
 
 export function clear() {
-    visitors = new Set();
+    visitors.clear();
 }
 
 export function trick_or_treat(treatOverride: boolean = false) {
@@ -33,8 +30,6 @@ export function trick_or_treat(treatOverride: boolean = false) {
         prize = super_rare[0];
     } else if (p <= 0.02) {
         prize = pick(super_rare);
-    } else if (p <= 0.08) {
-        prize = pick(rare);
     } else {
         prize = pick(standard);
     }
