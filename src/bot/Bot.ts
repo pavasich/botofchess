@@ -239,6 +239,21 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             bot.action(channel, api.messages.imanerd);
             break;
 
+        case 'set-reminder': {
+            if (isMod(userstate)) {
+
+            }
+            break;
+        }
+
+        case 'clear-reminder': {
+            if (isMod(userstate)) {
+                api.actions.clearReminder();
+            }
+            break;
+        }
+
+
         /** stream; uptime */
         case 'stream':
         case 'uptime':
@@ -325,7 +340,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
         /** description of the current event */
         case 'event':
-            say(`IT SPOOK TIME`);
+            // say(`IT SPOOK TIME`);
             break;
 
         /** display user's current ticket & token balance */
