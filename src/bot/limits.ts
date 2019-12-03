@@ -56,6 +56,7 @@ const limits: SNMap = {
     tttt: minute1,
     teamtrue: minute1,
     truetuesday: minute1,
+    curiositystream: 0,
 };
 
 export default limits;

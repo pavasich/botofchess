@@ -14,6 +14,7 @@ import { isMod, t } from './util';
 import { setState, getState } from './state';
 import run from '../api/events/halloween/run';
 import { minute } from '../util/time-expand';
+import { curiosity } from '../api/message-sources/curiositystream';
 
 
 async function distribute() {
@@ -239,9 +240,18 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             bot.action(channel, api.messages.imanerd);
             break;
 
+        /** curiositystream */
+        case 'curiositystream': {
+            bot.action(channel, curiosity);
+            break;
+        }
+
         case 'set-reminder': {
             if (isMod(userstate)) {
-
+                const notification = api.actions.setReminder(message, (s: string) => {
+                    bot.action(channel, s);
+                });
+                bot.action(channel, notification);
             }
             break;
         }

@@ -10,13 +10,13 @@ export default class CommandLimiter {
     public readonly timeouts: SNMap;
 
 
-    public constructor(timeouts:SNMap) {
+    public constructor(timeouts: SNMap) {
         this.timeouts = timeouts;
     }
 
 
     public enforce(dirtyUser: DirtyUser, command: string): boolean {
-        if (isMod(dirtyUser)) {
+        if (isMod(dirtyUser) || this.timeouts[command] === 0) {
             return false;
         }
 
