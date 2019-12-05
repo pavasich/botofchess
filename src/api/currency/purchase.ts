@@ -2,6 +2,7 @@ import db from '../../db';
 import { Model } from '../../db/db-constants';
 import { getBalanceForDirtyUser, decrementBalanceForDirtyUser } from './balance';
 import { sanitizeDirtyUser } from '../../models/User';
+import pluralize from '../../util/pluralize';
 
 const prices: Store = {
     ffxiv: 100,
@@ -38,10 +39,8 @@ export default (dirtyUser: DirtyUser, amount: number, item: keyof Store) => {
                 }
                 db.get(Model.Tickets).get(user.id).set(item, current + amount).write();
                 decrementBalanceForDirtyUser(dirtyUser, request);
-                const s = current + amount === 1
-                    ? ''
-                    : 's';
-                return `Success! You now have ${current + amount} ticket${s}.`
+                const sum = current + amount;
+                return `Success! You now have ${sum} ticket${pluralize(sum)}.`
             } else {
                 return `You can't afford that many. (${request - balance} short)`
             }

@@ -16,7 +16,7 @@ export default class CommandLimiter {
 
 
     public enforce(dirtyUser: DirtyUser, command: string): boolean {
-        if (isMod(dirtyUser) || this.timeouts[command] === 0) {
+        if (isMod(dirtyUser) || this.timeouts[command] === undefined) {
             return false;
         }
 

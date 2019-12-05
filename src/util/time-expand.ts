@@ -1,9 +1,15 @@
-export const second = (seconds: number) => seconds * 1000;
-export const minute = (minutes: number) => second(minutes * 60);
-export const hour = (hours: number) => minute(hours * 60);
+const a = 1000;
+const b = a * 60;
+const c = b * 60;
 
-export default {
-    second,
-    minute,
-    hour,
-};
+export function second(seconds: number) {
+    return seconds * a;
+}
+
+export function minute(minutes: number) {
+    return minutes * b;
+}
+
+export function hour(hours: number) {
+    return hours * c;
+}

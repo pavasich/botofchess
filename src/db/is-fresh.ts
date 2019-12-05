@@ -1,15 +1,16 @@
 import Message from '../api/message';
 import { Status } from './db-constants';
+import { minute } from '../util/time-expand';
 
-const minute = 1000 * 60;
-const minutesUntilStale = 10;
-const staleTimeout = minute * minutesUntilStale;
-const isFresh = (lastUpdated: number): boolean => {
+const TIME_UNTIL_STALE = minute(10);
+
+
+function isFresh(lastUpdated: number): boolean {
     const now = Date.now();
-    return (now - lastUpdated) < staleTimeout;
-};
+    return (now - lastUpdated) < TIME_UNTIL_STALE;
+}
 
-export default (data: Data): Message => {
+export default function (data: Data): Message {
     if (data.lastUpdated !== undefined) {
         return {
             code: 200,

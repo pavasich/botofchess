@@ -1,5 +1,5 @@
-export default (number: number): string => (
-    number === 1
+export default function pluralize(number: number): string {
+    return number === 1
         ? ''
-        : 's'
-);
+        : 's';
+}
