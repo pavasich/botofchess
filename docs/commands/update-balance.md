@@ -1,8 +1,6 @@
 # !update-balance
-A Mod tool for managing currency
-<br><br>
 #### Usage
-`!update-balance `__*`<username>`*__` `__*`<operation>`*__` `__*`<amount>`*__
+`!update-balance`__*`<username>`*__` `__*`<operation>`*__` `__*`<amount>`*__
 
 |Parameter|Type|
 |---|---|

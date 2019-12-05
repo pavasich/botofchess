@@ -1,8 +1,6 @@
 # !update-wallet
-A Mod tool for managing user wallets
-<br><br>
 #### Usage
-`!update-balance <`__*`username`*__`> <`__*`operation`*__`> <`__*`ticket_type`*__`> <`__*`amount`*__`>`
+`!update-balance`__*`<username>`*__` `__*`<operation>`*__` `__*`<ticket_type>`*__` `__*`<amount>`*__
 
 |Parameter|Type|
 |---|---|
