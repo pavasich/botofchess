@@ -6,6 +6,7 @@ Roll some dice
 
 #### Usage
 `!roll`__*`<number_of_sides>`*__
+
 `!roll`__*`<number_of_rolls>`*__`d`__*`<number_of_sides>`*__
 
 |Parameter|Type|
