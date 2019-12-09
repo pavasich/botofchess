@@ -45,7 +45,7 @@
     "url-loader": "^1.1.1",
     "validator": "^10.8.0",
     "webpack": "^4.5.0",
-    "webpack-dev-server": "^3.1.9",
+    "webpack-dev-server": "^3.1.11",
     "webpack-merge": "^4.1.4",
     "whatwg-fetch": "^2.0.3",
     "write-file-webpack-plugin": "^4.4.1",
