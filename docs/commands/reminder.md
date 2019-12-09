@@ -19,7 +19,7 @@ some other character not present in the rest of the text.
 __Examples__:
 
 `!set-reminder "bobobobobobo" 15`
-> Bot will say `bobobobobobo` ever 15 minutes
+> Bot will say `bobobobobobo` every 15 minutes
 
 `!set-reminder %This message has "quotes" in it% 7`
 > Bot will way `This message has "quotes" in it` every 7 minutes
