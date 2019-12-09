@@ -1,8 +1,6 @@
 # Command Index
 
-###### Grouped by required permissions; sorted alphabetically
-  
-
+###### Unrestricted
 |Command|Aliases|Description|Permissions Required|Throttle|
 |---|---|---|---|---|
 |__!balance__|`!spicybalance`|Print user's currency and tickets|_none_|5m|
@@ -32,9 +30,15 @@
 |__!teamtrue__|_none_|Print Team True message|_none_|1m|
 |__!tttt__|_none_|Print TTTT message|_none_|1m|
 |__!warframe__|_none_|Print Rook's in-game information for Warframe|_none_|1m|
-|-|-|-|-|-|
+
+###### Subscriber only
+|Command|Aliases|Description|Permissions Required|Throttle|
+|---|---|---|---|---|
 |__!request__|_none_|Partake in sub request|__Subscriber__|_none_|
-|-|-|-|-|-|
+
+###### Moderator only
+|Command|Aliases|Description|Permissions Required|Throttle|
+|---|---|---|---|---|
 |__!broadcast__|_none_|Start or stop broadcast-related features|__Moderator__|N/A|
 |__[!clear-reminder](./reminder.md)__|_none_|Stop reminder|__Moderator__|N/A|
 |__!disablelogging__|_none_|Turn off word tracking|__Moderator__|N/A|
@@ -50,7 +54,10 @@
 |__!tryagain__|_none_|Pick a different sub request|__Moderator__|N/A|
 |__[!update-balance](./update-balance.md)__|_none_|Manually update user currency balance|__Moderator__|N/A|
 |__[!update-wallet](./update-wallet.md)__|_none_|Manually update user wallet|__Moderator__|N/A|
-|-|-|-|-|-|
+
+###### Developer only
+|Command|Aliases|Description|Permissions Required|Throttle|
+|---|---|---|---|---|
 |__!gohomeyousdrunk__|_none_|Force bot to shut down|__birdofchess__, __bebop_bebop__|N/A|
 |__!givememoney__|_none_|Give everyone currency|__bebop_bebop__|N/A|
 |__!\_\_danger\_\_purge\_\_wallets\_\___|_none_|Destroy all tickets|__bebop_bebop__|N/A|
