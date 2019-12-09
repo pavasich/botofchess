@@ -1,4 +1,8 @@
 # !update-wallet
+Set, increment, or decrement any user's ticket balance.
+
+---
+
 #### Usage
 `!update-balance`__*`<username>`*__` `__*`<operation>`*__` `__*`<ticket_type>`*__` `__*`<amount>`*__
 
@@ -12,13 +16,13 @@
 __Examples__:
 
 `!update-wallet bebop_bebop set ffxiv 5`
-- Set bebop_bebop's ffxiv ticket balance to 5
+> Set bebop_bebop's ffxiv ticket balance to 5
 
 `!update-wallet bebop_bebop inc ffxiv 5`
--  Add 5 to bebop_bebop's ffxiv ticket balance
+>  Add 5 to bebop_bebop's ffxiv ticket balance
 
 `!update-wallet bebop_bebop dec ffxiv 5`
-- Subtract 5 from bebop_bebop's ffxiv ticket balance
+> Subtract 5 from bebop_bebop's ffxiv ticket balance
 
 ___
 
@@ -29,11 +33,12 @@ ___
 |__inc__|Increment a user's _ticket_type_ ticket balance by _amount_.|
 |__dec__|Decrement a user's _ticket_type_ ticket balance by _amount_.|
 
+---
+
 > These operations exist to empower moderators such that they can
 manage balances as they deem necessary. Feel free to use them. I only
 ask that you kindly refrain from using them on yourself if you plan
 to enter a giveaway >D
 
----
 
 _[About Wallets](../wallet.md)_

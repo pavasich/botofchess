@@ -1,4 +1,8 @@
 # !update-balance
+Set, increment, or decrement any user's currency balance
+
+---
+
 #### Usage
 `!update-balance`__*`<username>`*__` `__*`<operation>`*__` `__*`<amount>`*__
 
@@ -11,13 +15,13 @@
 __Examples__:
 
 `!update-balance bebop_bebop set 50`
-- Set bebop_bebop's currency balance to 50
+> Set bebop_bebop's currency balance to 50
 
 `!update-balance bebop_bebop inc 50`
--  Add 50 to bebop_bebop's currency balance
+>  Add 50 to bebop_bebop's currency balance
 
 `!update-balance bebop_bebop dec 50`
-- Subtract 50 from bebop_bebop's currency balance
+> Subtract 50 from bebop_bebop's currency balance
 
 ___
 
@@ -27,6 +31,8 @@ ___
 |__set__|Overwrite a user's currency balance to be _amount_.|
 |__inc__|Increment a user's currency balance by _amount_.|
 |__dec__|Decrement a user's currency balance by _amount_.|
+
+---
 
 > These operations exist to empower moderators such that they can
 manage balances as they deem necessary. Feel free to use them. I only
