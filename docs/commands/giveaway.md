@@ -1,7 +1,6 @@
 # !giveaway
 
-`!giveaway` initiates a raffle that requires participants to say the
-command `!enter` in chat.
+`!giveaway` initiates a raffle that requires viewers to say `!enter` in chat to participate.
 Bot then picks a winner from all participants at random.
 
 ---
