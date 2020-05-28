@@ -15,6 +15,7 @@ import { setState, getState } from './state';
 import run from '../api/events/halloween/run';
 import { minute } from '../util/time-expand';
 import { curiosity } from '../api/message-sources/curiositystream';
+import { afsp } from '../api/message-sources/afsp';
 
 
 async function distribute() {
@@ -243,6 +244,12 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** curiositystream */
         case 'curiositystream': {
             bot.action(channel, curiosity);
+            break;
+        }
+
+        /** afsp */
+        case 'afsp': {
+            bot.action(channel, afsp);
             break;
         }
 

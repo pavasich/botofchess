@@ -1,0 +1,1 @@
+export const afsp = 'Join The American Foundation for Suicide Prevention in spreading the word that no one is alone, and that we’re here for one another. Your donation helps the AFSP fund research, education, advocacy programs for suicide prevention, and support for survivors of suicide loss. Show your support here: https://tiltify.com/@birdofchess/birds-for-afsp';

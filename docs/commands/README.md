@@ -1,6 +1,6 @@
 # Command Index
 
-###### Unrestricted
+#### Unrestricted
 |Command|Aliases|Description|Permissions Required|Throttle|
 |---|---|---|---|---|
 |__!balance__|`!spicybalance`|Print user's currency and tickets|_none_|5m|
@@ -31,12 +31,12 @@
 |__!tttt__|_none_|Print TTTT message|_none_|1m|
 |__!warframe__|_none_|Print Rook's in-game information for Warframe|_none_|1m|
 
-###### Subscriber
+#### Subscriber
 |Command|Aliases|Description|Permissions Required|Throttle|
 |---|---|---|---|---|
 |__!request__|_none_|Partake in sub request|__Subscriber__|_none_|
 
-###### Moderator
+#### Moderator
 |Command|Aliases|Description|Permissions Required|Throttle|
 |---|---|---|---|---|
 |__!broadcast__|_none_|Start or stop broadcast-related features|__Moderator__|N/A|
@@ -55,7 +55,7 @@
 |__[!update-balance](./update-balance.md)__|_none_|Manually update user currency balance|__Moderator__|N/A|
 |__[!update-wallet](./update-wallet.md)__|_none_|Manually update user wallet|__Moderator__|N/A|
 
-###### Developer
+#### Developer
 |Command|Aliases|Description|Permissions Required|Throttle|
 |---|---|---|---|---|
 |__!gohomeyousdrunk__|_none_|Force bot to shut down|__birdofchess__, __bebop_bebop__|N/A|
