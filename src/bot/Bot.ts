@@ -16,6 +16,7 @@ import run from '../api/events/halloween/run';
 import { minute } from '../util/time-expand';
 import { curiosity } from '../api/message-sources/curiositystream';
 import { afsp } from '../api/message-sources/afsp';
+import { trevor } from '../api/message-sources/trevor';
 
 
 async function distribute() {
@@ -250,6 +251,12 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** afsp */
         case 'afsp': {
             bot.action(channel, afsp);
+            break;
+        }
+
+        /** trevor */
+        case 'trevor': {
+            bot.action(channel, trevor);
             break;
         }
 
