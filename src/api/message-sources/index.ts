@@ -18,5 +18,5 @@ export { default as streamGifts } from './stream-gifts';
 export { default as teamTrueAbout } from './team-true-about';
 export { default as trevor } from './trevor';
 export { default as warframe } from './warframe';
-export { default as guests } from './guests';
-export { default as support } from './support';
+export { default as guests } from './guests.monologue';
+export { default as support } from './support.monologue';

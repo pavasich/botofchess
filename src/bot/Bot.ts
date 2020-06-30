@@ -252,12 +252,12 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         }
 
         case 'guests': {
-            bot.action(channel, api.messages.guests);
+            speak(api.messages.guests());
             break;
         }
 
         case 'support': {
-            bot.action(channel, api.messages.support);
+            speak(api.messages.support());
             break;
         }
 
