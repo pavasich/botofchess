@@ -25,7 +25,7 @@ function results(rolls: number[]) {
 }
 
 
-export function rollDie(username: string, dirtyRollToken: string = ''): Monologue|void {
+export default function rollDie(username: string, dirtyRollToken: string = ''): Monologue|void {
     // prevent stupid things
     const size = dirtyRollToken.length;
     if (size > 20 || size === 0) {

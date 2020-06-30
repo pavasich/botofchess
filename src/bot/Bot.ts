@@ -14,9 +14,6 @@ import { isMod, t } from './util';
 import { setState, getState } from './state';
 import run from '../api/events/halloween/run';
 import { minute } from '../util/time-expand';
-import { curiosity } from '../api/message-sources/curiositystream';
-import { afsp } from '../api/message-sources/afsp';
-import { trevor } from '../api/message-sources/trevor';
 
 
 async function distribute() {
@@ -228,7 +225,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
         /** discord url */
         case 'discord':
-            bot.action(channel, api.messages.discord.url);
+            bot.action(channel, api.messages.discord);
             break;
 
         /** ls commands */
@@ -244,19 +241,29 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
         /** curiositystream */
         case 'curiositystream': {
-            bot.action(channel, curiosity);
+            bot.action(channel, api.messages.curiosity);
             break;
         }
 
         /** afsp */
         case 'afsp': {
-            bot.action(channel, afsp);
+            bot.action(channel, api.messages.afsp);
+            break;
+        }
+
+        case 'guests': {
+            bot.action(channel, api.messages.guests);
+            break;
+        }
+
+        case 'support': {
+            bot.action(channel, api.messages.support);
             break;
         }
 
         /** trevor */
         case 'trevor': {
-            bot.action(channel, trevor);
+            bot.action(channel, api.messages.trevor);
             break;
         }
 
@@ -406,12 +413,12 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
         /** ls guild wars 1 characters */
         case 'gw1':
-            say(api.messages.gw1.character);
+            say(api.messages.gw1.character_0);
             break;
 
         /** ls guild wars 2 characters */
         case 'gw2':
-            say(api.messages.gw2.character);
+            say(api.messages.gw2.character_0);
             break;
 
         /** battle.net user identity */
@@ -426,12 +433,12 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
         /** ls elder scrolls online characters */
         case 'eso':
-            say(api.messages.eso.character);
+            say(api.messages.eso.character_0);
             break;
 
         /** ls warframe characters */
         case 'warframe':
-            say(api.messages.warframe.character);
+            say(api.messages.warframe.character_0);
             break;
 
         /** toggle subs-only mode */
@@ -474,11 +481,6 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** team true garbage */
         case 'teamtrue':
             bot.action(channel, api.messages.teamTrueAbout);
-            break;
-
-        /** together to the top garbage */
-        case 'tttt':
-            bot.action(channel, api.messages.ttttAbout);
             break;
 
         /** give away something to chatters */

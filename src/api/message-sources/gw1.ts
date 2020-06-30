@@ -1,3 +1,3 @@
-export const gw1 = {
-    character: '[Vianne Lacelle]',
+export default {
+    character_0: '[Vianne Lacelle]',
 };

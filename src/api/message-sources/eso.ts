@@ -1,3 +1,3 @@
-export const eso = {
-    character: '[Kelryn Talonir :: @birdofchess]',
+export default {
+    character_0: '[Kelryn Talonir :: @birdofchess]',
 };

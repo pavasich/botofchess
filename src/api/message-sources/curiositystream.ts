@@ -1,1 +1,1 @@
-export const curiosity = `Sponsored: Want smarter TV? Get thousands of shows on everything you can imagine - space, dinosaurs, volcanoes and more. Use my code birdofchess for 30 days free. https://wehy.pe/7/birdofchess`;
+export default `Sponsored: Want smarter TV? Get thousands of shows on everything you can imagine - space, dinosaurs, volcanoes and more. Use my code birdofchess for 30 days free. https://wehy.pe/7/birdofchess`;

@@ -1,3 +1,3 @@
-export const warframe = {
-    character: '[Rookthebird]',
+export default {
+    character_0: '[Rookthebird]',
 };

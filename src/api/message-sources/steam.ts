@@ -1,1 +1,1 @@
-export const steam = 'steamcommunity.com/id/birdofchess';
+export default 'steamcommunity.com/id/birdofchess';
