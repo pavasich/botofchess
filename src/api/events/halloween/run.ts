@@ -19,9 +19,7 @@ const comments = [
     'WHO DARES?',
     'Omae Wa Mou Shindeiru',
     'It\'ll be years before you can face me.',
-    'No, I am the one who knocks.',
     'Before you ask, no. I don\'t dream of electric sheep. I don\'t dream at all.',
-    '*stares dramatically* Lost in time, like poops in rain.',
     '........NANI?!',
 ];
 
@@ -32,7 +30,7 @@ export default (channel: string, bot: any, speakingFunction: (m: Monologue) => v
         tricking: true,
     });
     bot.action(channel, 'hears you knocking.');
-    bot.action(channel, `${pick(comments)} (chat within 30s to be eligible for a ${forceTreat ? 'treat' : 'trick'})`);
+    bot.action(channel, `${pick(comments)} (chat within 30s to participate)`);
     setTimeout(() => {
         speakingFunction(trick_or_treat(forceTreat));
         clear();

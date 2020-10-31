@@ -48,7 +48,7 @@ function endStream(userstate: DirtyUser) {
         });
 
         if (getState().eventInterval !== null) {
-            clearInterval(getState().eventInterval);
+            clearInterval(getState().eventInterval as NodeJS.Timer);
             setState({
                 eventInterval: null,
             })
