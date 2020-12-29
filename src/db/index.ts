@@ -11,6 +11,7 @@ const defaultValues = {
     [Model.Currency]: {},
     [Model.Tickets]: {},
     [Model.Log]: [],
+    [Model.Channel_Points]: {},
     ...seed,
 };
 

@@ -8,7 +8,8 @@ export enum Model {
     Quote = 'Quote',
     Log = 'Log',
     Word = 'Word',
-    Channel_Event = 'Channel_Event'
+    Channel_Event = 'Channel_Event',
+    Channel_Points = 'Channel_Points',
 }
 
 export enum STATUSES {
