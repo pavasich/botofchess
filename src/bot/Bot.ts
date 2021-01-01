@@ -14,6 +14,8 @@ import { isMod, t } from './util';
 import { setState, getState } from './state';
 import run from '../api/events/halloween/run';
 import { minute } from '../util/time-expand';
+import draw from '../api/channel-points/draw';
+import { ChannelPointReward } from './rewards';
 
 
 async function distribute() {
@@ -198,6 +200,10 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
     let writeLog = true;
 
     switch (car) {
+        case 'draw':
+            draw(cdr[0] as ChannelPointReward, parseInt(cdr[1], 10));
+            break;
+
         /** game list url */
         case 'games':
         case 'gameslist':

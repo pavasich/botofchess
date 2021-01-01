@@ -1,9 +1,9 @@
 import { TwitchPrivateMessage } from 'twitch-chat-client/lib/StandardCommands/TwitchPrivateMessage';
 
-import { apiClient } from '../../bot/client';
 import rewardNames, { ChannelPointReward } from '../../bot/rewards';
-import updateChannelPointRewardBalance from './update-channel-point-reward-balance';
 import client from '../../bot/client';
+import { Model } from '../../db/db-constants';
+import db from '../../db';
 
 const rewards = Object.keys(rewardNames) as ChannelPointReward[];
 
@@ -39,15 +39,32 @@ export default async function giveEntry(channel: string, user: string, message: 
         }
 
         /** validate user */
-        const username = to.replace('@', '');
-        const user = await apiClient.kraken.users.getUserByName(username);
-        if (user === null) {
+        const all = db.get(Model.Channel_Points).value();
+        const keys = Object.keys(all);
+        const username = to.replace('@', '').toLowerCase();
+
+        let id;
+        for (let i = 0, q = keys.length; i < q; i++) {
+            const recordedUser = all[keys[i]].userName.toLowerCase();
+            if (recordedUser === username) {
+                id = keys[i];
+                break;
+            }
+        }
+
+        if (id === undefined) {
             client.say('birdofchess', `Couldn't find someone named ${username} :/`);
             return;
         }
 
         /** good to go; update */
         client.say('birdofchess', 'Okay!');
-        updateChannelPointRewardBalance(user, rewardID, n);
+
+        db.update([Model.Channel_Points, id, 'rewards', rewardID], (value) => {
+            if (value === undefined) {
+                return n;
+            }
+            return parseInt(value, 10) + n;
+        }).write();
     }
 }
