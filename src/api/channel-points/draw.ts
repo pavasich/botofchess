@@ -35,11 +35,16 @@ export default function draw(reward: ChannelPointReward, winnerCount: number = 1
         if (winnerCount > 1) {
             pre = `#${i + 1}: `;
         }
-        const winningUserDisplayName = db
-            .get(Model.Channel_Points)
-            .get(winner)
-            .get('userDisplayName')
-            .value()
+
+        let winningUserDisplayName = 'bebop_bebop';
+
+        while (winningUserDisplayName === 'bebop_bebop') {
+            winningUserDisplayName = db
+                .get(Model.Channel_Points)
+                .get(winner)
+                .get('userDisplayName')
+                .value();
+        }
 
         const result = `${pre}@${winningUserDisplayName}!`;
 
