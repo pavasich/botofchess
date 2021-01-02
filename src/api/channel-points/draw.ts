@@ -27,6 +27,7 @@ export default function draw(reward: ChannelPointReward, winnerCount: number = 1
     } else {
         client.say('birdofchess', 'The winner is:');
     }
+    console.log(entries);
     /** splice out winners to keep odds fair */
     for (let i = 0, n = winnerCount; i < n; i++) {
         const windex = Math.floor(Math.random() * entries.length);
@@ -36,15 +37,11 @@ export default function draw(reward: ChannelPointReward, winnerCount: number = 1
             pre = `#${i + 1}: `;
         }
 
-        let winningUserDisplayName = 'bebop_bebop';
-
-        while (winningUserDisplayName === 'bebop_bebop') {
-            winningUserDisplayName = db
-                .get(Model.Channel_Points)
-                .get(winner)
-                .get('userDisplayName')
-                .value();
-        }
+        const winningUserDisplayName = db
+            .get(Model.Channel_Points)
+            .get(winner)
+            .get('userDisplayName')
+            .value()
 
         const result = `${pre}@${winningUserDisplayName}!`;
 
