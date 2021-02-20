@@ -30,7 +30,7 @@
     "lowdb": "^1.0.0",
     "mini-css-extract-plugin": "^0.4.5",
     "node-fetch": "^1.7.3",
-    "node-sass": "^4.9.3",
+    "node-sass": "^4.13.1",
     "postcss-loader": "^3.0.0",
     "postcss-reporter": "^6.0.0",
     "react": "^16.9.0",
