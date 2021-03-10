@@ -16,9 +16,9 @@ function getRewardID(shorthand: string) {
 }
 
 export default async function giveEntry(channel: string, user: string, message: string, msg: TwitchPrivateMessage) {
-    if (message.startsWith('!give')) {
+    if (message.split(' ')[0] === '!give') {
         if (!msg.userInfo.isMod) {
-            client.say('Nice try, dork');
+            client.say('birdofchess', 'Nice try, dork');
             return;
         }
         const [, amount, of, to] = message.split(' ');
