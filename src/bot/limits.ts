@@ -10,6 +10,7 @@ type SNMap = {
     [key: string]: number
 }
 const limits: SNMap = {
+    aha: second10,
     balance: minute5,
     battlenet: minute1,
     battletag: minute1,
@@ -18,7 +19,8 @@ const limits: SNMap = {
     coinflip: second30,
     cointoss: second30,
     commands: minute1,
-    discord: minute5,
+    discord: second30,
+    donate: second10,
     donorquote: second5,
     eso: minute1,
     ffxiv: minute1,
@@ -33,6 +35,7 @@ const limits: SNMap = {
     imanerd: minute5,
     overwatch: minute1,
     ow: minute1,
+    pronouns: minute1,
     quote: second5,
     roll: second10,
     shame: second30,
@@ -45,6 +48,7 @@ const limits: SNMap = {
     tttt: minute1,
     uptime: minute1,
     warframe: minute1,
+    youtube: second10,
 };
 
 export default limits;

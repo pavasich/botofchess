@@ -16,6 +16,7 @@ import run from '../api/events/halloween/run';
 import { minute } from '../util/time-expand';
 import draw from '../api/channel-points/draw';
 import { ChannelPointReward } from './rewards';
+import message_bank, { synonyms } from './message-bank';
 
 
 async function distribute() {
@@ -199,15 +200,20 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
     let writeLog = true;
 
+    if (message_bank[car] !== undefined) {
+        bot.action(channel, message_bank[car]);
+        return;
+    }
+
+    const synonym = synonyms[car];
+    if (synonym !== undefined) {
+        bot.action(channel, message_bank[synonym]);
+        return;
+    }
+
     switch (car) {
         case 'draw':
             draw(cdr[0] as ChannelPointReward, parseInt(cdr[1], 10));
-            break;
-
-        /** game list url */
-        case 'games':
-        case 'gameslist':
-            say('https://bit.ly/2GqYEfS');
             break;
 
         /** shame */
@@ -229,47 +235,8 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             speak(api.messages.flipCoin(userstate.username));
             break;
 
-        /** discord url */
-        case 'discord':
-            bot.action(channel, api.messages.discord);
-            break;
-
-        /** ls commands */
-        case 'help':
-        case 'commands':
-            bot.action(channel, api.messages.help);
-            break;
-
-        /** imanerd */
-        case 'imanerd':
-            bot.action(channel, api.messages.imanerd);
-            break;
-
-        /** curiositystream */
-        case 'curiositystream': {
-            bot.action(channel, api.messages.curiosity);
-            break;
-        }
-
-        /** afsp */
-        case 'afsp': {
-            bot.action(channel, api.messages.afsp);
-            break;
-        }
-
-        case 'guests': {
-            speak(api.messages.guests());
-            break;
-        }
-
         case 'support': {
             speak(api.messages.support());
-            break;
-        }
-
-        /** trevor */
-        case 'trevor': {
-            bot.action(channel, api.messages.trevor);
             break;
         }
 
@@ -283,6 +250,17 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             break;
         }
 
+        case 'pronouns': {
+            speak(
+                new Monologue()
+                    .add("The birdfam is an LGBTQIA+ friendly space! If you'd like to set your pronouns in chat, download the extension for your browser of choice: ")
+                    .add('Chrome: https://chrome.google.com/webstore/detail/twitch-chat-pronouns/agnfbjmjkdncblnkpkgoefbpogemfcii', 300)
+                    .add('Firefox: https://addons.mozilla.org/en-US/firefox/addon/twitch-chat-pronouns/', 300)
+                    .add('Once you have the addon installed, set it up at https://pronouns.alejo.io/', 300)
+            );
+            break;
+        }
+
         case 'clear-reminder': {
             if (isMod(userstate)) {
                 api.actions.clearReminder();
@@ -290,16 +268,10 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             break;
         }
 
-
         /** stream; uptime */
         case 'stream':
         case 'uptime':
             bot.action(channel, actions.uptime(state.startTime));
-            break;
-
-        /** steam url */
-        case 'steam':
-            say(api.messages.steam);
             break;
 
         /** quote */
@@ -374,12 +346,6 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-
-        /** description of the current event */
-        case 'event':
-            // say(`IT SPOOK TIME`);
-            break;
-
         /** display user's current ticket & token balance */
         case 'balance':
         case 'spicybalance':
@@ -412,41 +378,6 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-        /** ls final fantasy 14 characters */
-        case 'ffxiv':
-            say(api.messages.ffxiv.character_0);
-            break;
-
-        /** ls guild wars 1 characters */
-        case 'gw1':
-            say(api.messages.gw1.character_0);
-            break;
-
-        /** ls guild wars 2 characters */
-        case 'gw2':
-            say(api.messages.gw2.character_0);
-            break;
-
-        /** battle.net user identity */
-        case 'battlenet':
-        case 'bnet':
-        case 'ow':
-        case 'overwatch':
-        case 'btag':
-        case 'battletag':
-            say(api.messages.battlenet.battletag);
-            break;
-
-        /** ls elder scrolls online characters */
-        case 'eso':
-            say(api.messages.eso.character_0);
-            break;
-
-        /** ls warframe characters */
-        case 'warframe':
-            say(api.messages.warframe.character_0);
-            break;
-
         /** toggle subs-only mode */
         case 'subscribers':
             if (isMod(userstate)) {
@@ -476,17 +407,11 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-
         /** raffle off a prize via user tickets */
         case 'raffle':
             if (isMod(userstate)) {
                 raffle();
             }
-            break;
-
-        /** team true garbage */
-        case 'teamtrue':
-            bot.action(channel, api.messages.teamTrueAbout);
             break;
 
         /** give away something to chatters */
@@ -509,7 +434,6 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             }
             break;
 
-
         /** give away something spooky to chatters */
         case 'treat':
             if (isMod(userstate)) {
@@ -520,11 +444,6 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** enter a giveaway */
         case 'enter':
             api.events.giveaway.enter(userstate);
-            break;
-
-        /** stream gifts url */
-        case 'streamgifts':
-            bot.action(channel, api.messages.streamGifts);
             break;
 
         /** change token distribution multiplier */
@@ -539,11 +458,6 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             } else {
                 bot.action(channel, `Current multiplier: ${api.actions.getCurrencyMultiplier()}`);
             }
-            break;
-
-        /** old promotional material */
-        case 'skyforge':
-            bot.action(channel, `Sponsored: Skyforge, a beautiful, MMORPG game with awesome grinding and battles. Think it looks fun? Check it out here: https://wehy.pe/3/birdofchess`);
             break;
 
         /** shoutout a twitch streamer */
@@ -608,6 +522,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
             writeLog = false;
             break;
     }
+
     if (writeLog && state.enableLogging) {
         logAction(userstate, message);
     }
