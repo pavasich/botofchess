@@ -1,6 +1,6 @@
 const message_bank: Record<string, string> = {
     /** v v v CURRENT EVENT GOES HERE v v v */
-    event: "Heart disease is the No. 1 killer worldwide, and stroke ranks second globally. The American Heart Association strives to see a world free of cardiovascular diseases and stroke. | Find out more: www.heart.org | Women's heart health: www.goredforwomen.org",
+    event: "",
     /** ^ ^ ^ CURRENT EVENT GOES HERE ^ ^ ^ */
     afsp: 'Join the American Foundation for Suicide Prevention in spreading the word that no one is alone, and that we’re here for one another. Your donation helps the AFSP fund research, education, advocacy programs for suicide prevention, and support for survivors of suicide loss. Show your support here: https://afsp.org/donate-to-afsp',
     aha: "Heart disease is the No. 1 killer worldwide, and stroke ranks second globally. The American Heart Association strives to see a world free of cardiovascular diseases and stroke. | Find out more: www.heart.org | Women's heart health: www.goredforwomen.org",
@@ -22,6 +22,7 @@ const message_bank: Record<string, string> = {
     twitter: 'https://twitter.com/birdofchess',
     warframe: 'Warframe: [Rookthebird]',
     youtube: 'Birdofchess is now on YouTube! https://www.youtube.com/birdofchess',
+    hyperx: 'Check out the HyperX Quadcast here!: https://bit.ly/QuadcastS',
 };
 
 export const synonyms: Record<string, string> = {
