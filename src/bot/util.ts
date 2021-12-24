@@ -2,7 +2,7 @@ import { channel as data_channel } from "./globals";
 import { minute, second } from '../util/time-expand';
 
 export const isMod = ({ mod, username }: DirtyUser): boolean => {
-    const b = mod || username === data_channel || username === 'birdofchess';
+    const b = mod || username === data_channel || username === 'rookuri';
     console.log(mod, username, '=', b);
     return b;
 };

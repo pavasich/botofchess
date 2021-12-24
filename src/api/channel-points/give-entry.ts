@@ -18,7 +18,7 @@ function getRewardID(shorthand: string) {
 export default async function giveEntry(channel: string, user: string, message: string, msg: TwitchPrivateMessage) {
     if (message.split(' ')[0] === '!give') {
         if (!msg.userInfo.isMod) {
-            client.say('birdofchess', 'Nice try, dork');
+            client.say('rookuri', 'Nice try, dork');
             return;
         }
         const [, amount, of, to] = message.split(' ');
@@ -27,14 +27,14 @@ export default async function giveEntry(channel: string, user: string, message: 
         /** validate amount */
         const n = parseInt(amount, 10);
         if (n !== n) {
-            client.say('birdofchess', 'That is not a number I can work with.');
+            client.say('rookuri', 'That is not a number I can work with.');
             return;
         }
 
         /** validate reward ID */
         const rewardID = getRewardID(of);
         if (rewardID === undefined) {
-            client.say('birdofchess', "I couldn't find any rewards like that.");
+            client.say('rookuri', "I couldn't find any rewards like that.");
             return;
         }
 
@@ -53,12 +53,12 @@ export default async function giveEntry(channel: string, user: string, message: 
         }
 
         if (id === undefined) {
-            client.say('birdofchess', `Couldn't find someone named ${username} :/`);
+            client.say('rookuri', `Couldn't find someone named ${username} :/`);
             return;
         }
 
         /** good to go; update */
-        client.say('birdofchess', 'Okay!');
+        client.say('rookuri', 'Okay!');
 
         db.update([Model.Channel_Points, id, 'rewards', rewardID], (value) => {
             if (value === undefined) {

@@ -6,7 +6,7 @@ export function msToHms(ms: number) {
 }
 
 export function isMod({ mod, username }: DirtyUser) {
-    const b = mod || username === 'birdofchess';
+    const b = mod || username === 'rookuri';
     console.log(mod, username, '=', b);
     return b;
 }

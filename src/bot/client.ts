@@ -13,7 +13,7 @@ import { options } from './globals';
 // const authProvider = new StaticAuthProvider(client_id, access_token);
 // export const apiClient = new ApiClient({ authProvider });
 // export const pubSubClient = new PubSubClient();
-// export const chatClient = new ChatClient(authProvider, { channels: ['birdofchess'] });
+// export const chatClient = new ChatClient(authProvider, { channels: ['rookuri'] });
 
 
 // (async function go() {

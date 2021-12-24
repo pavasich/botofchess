@@ -19,9 +19,9 @@ const message_bank: Record<string, string> = {
     steam: 'steamcommunity.com/id/birdofchess',
     streamgifts: "We're Partnered with StreamGifts, a gifting service that enables Twitch communities to send appreciation gifts to their favorite streamers while protecting personal information on both sides--safer than an Amazon wishlist or even a P.O. box is now. Send a gift through https://stream.gifts/birdofchess",
     trevor: 'The Trevor Project is a leading national organization providing crisis intervention and suicide prevention services to LGBTQIA+ young people under 25. Help save lives by showing your support: https://donate.tiltify.com/@birdofchess/bird-pride-in-september',
-    twitter: 'https://twitter.com/birdofchess',
+    twitter: 'https://twitter.com/rookuri',
     warframe: 'Warframe: [Rookthebird]',
-    youtube: 'Birdofchess is now on YouTube! https://www.youtube.com/birdofchess',
+    youtube: 'Rook is on YouTube! https://www.youtube.com/rookuri',
     hyperx: 'Check out the HyperX Quadcast here!: https://bit.ly/QuadcastS',
 };
 

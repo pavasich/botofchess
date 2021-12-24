@@ -46,5 +46,5 @@ export default (start_time: number|void) => {
     }
 
 
-    return `birdofchess has been streaming for ${s}.`;
+    return `rookuri has been streaming for ${s}.`;
 };

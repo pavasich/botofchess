@@ -23,9 +23,9 @@ export default function draw(reward: ChannelPointReward, winnerCount: number = 1
     }
 
     if (winnerCount > 1) {
-        client.say('birdofchess', 'The winners are:');
+        client.say('rookuri', 'The winners are:');
     } else {
-        client.say('birdofchess', 'The winner is:');
+        client.say('rookuri', 'The winner is:');
     }
     console.log(entries);
     /** splice out winners to keep odds fair */
@@ -49,14 +49,14 @@ export default function draw(reward: ChannelPointReward, winnerCount: number = 1
 
         setTimeout(() => {
             client.say(
-                'birdofchess',
+                'rookuri',
                 result,
             );
         }, 1000);
 
         if ((i + 1) === winnerCount) {
             setTimeout(() => {
-                client.say('birdofchess', 'Congratulations!');
+                client.say('rookuri', 'Congratulations!');
             }, 1000);
         }
     }

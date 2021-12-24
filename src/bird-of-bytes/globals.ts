@@ -1,6 +1,6 @@
 import { password } from '../bot/secrets';
 
-export const channel: string = 'birdofchess';
+export const channel: string = 'rookuri';
 
 export const options: object = {
   options: {
