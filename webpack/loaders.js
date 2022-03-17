@@ -91,7 +91,7 @@ module.exports = {
   module: {
     rules: [
       ...assetLoaders,
-      cssLoader(),
+      // cssLoader(),
     ],
   },
 };

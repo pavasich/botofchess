@@ -21,11 +21,14 @@ import message_bank, { synonyms } from './message-bank';
 
 async function distribute() {
     await api.actions.distributeCurrency(getState().subsonly);
-    bot.action(
-        data_channel,
+    bot.me(
+        CHANNEL,
         `Tokens have been distributed! (+${20 * api.actions.getCurrencyMultiplier()})`,
     );
 }
+
+const CHANNEL = `#${data_channel}`
+
 
 /** start & end stream */
 function startStream(userstate: DirtyUser) {
@@ -35,11 +38,11 @@ function startStream(userstate: DirtyUser) {
             startTime: Date.now(),
         });
 
-        const eventInterval = setInterval(() => run(data_channel, bot, speak), minute(12));
+        const eventInterval = setInterval(() => run(CHANNEL, bot, speak), minute(12));
         setState({
             eventInterval,
         });
-        bot.action(data_channel, 'Hamlo >D');
+        bot.me(CHANNEL, 'Hamlo >D');
     }
 }
 
@@ -57,7 +60,7 @@ function endStream(userstate: DirtyUser) {
             })
         }
 
-        bot.action(data_channel, 'Gooooooooooooobie!');
+        bot.me(CHANNEL, 'Gooooooooooooobie!');
     }
 }
 
@@ -71,7 +74,7 @@ function logAction(userstate: DirtyUser, string: string) {
 
 /** S E T U P */
 console.log('running!');
-const say_bounced = debounce((s) => { bot.action(data_channel, s) }, t.second2);
+const say_bounced = debounce((s) => { bot.me(CHANNEL, s) }, t.second2);
 
 
 /**
@@ -88,7 +91,7 @@ function say(s: string) {
  * @param {string} string
  */
 function dangerSay(string: string) {
-    return bot.action(data_channel, string);
+    return bot.me(CHANNEL, string);
 }
 
 
@@ -115,19 +118,13 @@ function speak(monologue: Monologue) {
 }
 
 
-/** on connect */
-bot.on('connected', function() {
-    say('I\'m alive!!');
-});
-
-
 /**
  * goHome
  * @param {string} name
  */
 function goHome(name: string) {
     if (name === 'bebop_bebop' || name === data_channel) {
-        bot.action(data_channel, 'no, im not ready to go...');
+        bot.me(CHANNEL, 'no, im not ready to go...');
         bot.disconnect();
     } else {
         say('bitch you can\'t tell me what to do');
@@ -144,9 +141,16 @@ function getWinner() {
     }, t.second4);
 }
 
+interface Message {
+    channel: string;
+    username: string;
+    message: string;
+    isSelf: boolean;
+    tags: DirtyUser;
+}
 
-async function commands(channel: string, userstate: DirtyUser, message: string, self: boolean) {
-    if (self) return;
+async function commands({ channel, username, message, isSelf, tags: userstate }: Message) {
+    if (isSelf) return;
     api.user.dirty.upsert(userstate);
     const state = getState();
     if (state.broadcasting && state.tricking) {
@@ -180,14 +184,14 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
     }
 
     if (sillysize > 0) {
-        bot.action(channel, sillything.join(' '));
+        bot.me(channel, sillything.join(' '));
     }
 
     if (message[0] !== '!') {
         return;
     }
 
-    console.log('checking out a message', userstate, message);
+    console.log('checking out a message', username, message);
     const [car, ...cdr] = message.replace('!', '').toLowerCase().split(' ');
     if (limits[car] !== undefined) {
         if (state.rateLimit.enforce(userstate, car)) {
@@ -201,13 +205,13 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
     let writeLog = true;
 
     if (message_bank[car] !== undefined) {
-        bot.action(channel, message_bank[car]);
+        bot.me(channel, message_bank[car]);
         return;
     }
 
     const synonym = synonyms[car];
     if (synonym !== undefined) {
-        bot.action(channel, message_bank[synonym]);
+        bot.me(channel, message_bank[synonym]);
         return;
     }
 
@@ -243,9 +247,9 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         case 'set-reminder': {
             if (isMod(userstate)) {
                 const notification = api.actions.setReminder(message, (s: string) => {
-                    bot.action(channel, s);
+                    bot.me(channel, s);
                 });
-                bot.action(channel, notification);
+                bot.me(channel, notification);
             }
             break;
         }
@@ -271,7 +275,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** stream; uptime */
         case 'stream':
         case 'uptime':
-            bot.action(channel, actions.uptime(state.startTime));
+            bot.me(channel, actions.uptime(state.startTime));
             break;
 
         /** quote */
@@ -312,7 +316,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** hug another user */
         case 'hug':
             const result = await actions.hug(userstate, cdr[0]);
-            bot.action(channel, result);
+            bot.me(channel, result);
             break;
 
         /** dice roll */
@@ -332,16 +336,16 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                     if (!state.broadcasting) {
                         startStream(userstate);
                     } else {
-                        bot.action(channel, api.messages.broadcast.alreadyStreaming);
+                        bot.me(channel, api.messages.broadcast.alreadyStreaming);
                     }
                 } else if (cdr[0] === 'end') {
                     if (state.broadcasting) {
                         endStream(userstate);
                     } else {
-                        bot.action(channel, api.messages.broadcast.notStreaming);
+                        bot.me(channel, api.messages.broadcast.notStreaming);
                     }
                 } else {
-                    bot.action(channel, api.messages.broadcast.syntax);
+                    bot.me(channel, api.messages.broadcast.syntax);
                 }
             }
             break;
@@ -349,14 +353,14 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** display user's current ticket & token balance */
         case 'balance':
         case 'spicybalance':
-            bot.action(channel, actions.balance(userstate));
+            bot.me(channel, actions.balance(userstate));
             break;
 
         /** spend tokens on tickets */
         case 'purchase':
             const response = actions.purchase(userstate, cdr[0], cdr[1]);
             if (response !== undefined) {
-                bot.action(channel, response);
+                bot.me(channel, response);
             }
             break;
 
@@ -401,9 +405,9 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         case 'givememoney':
             if (userstate.username === 'bebop_bebop') {
                 await api.actions.distributeCurrency(state.subsonly);
-                bot.action(channel, 'ok!');
+                bot.me(channel, 'ok!');
             } else {
-                bot.action(channel, 'lol nty');
+                bot.me(channel, 'lol nty');
             }
             break;
 
@@ -420,7 +424,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                 if (typeof cdr[0] === 'string' && cdr[0].length > 0) {
                     const item = cdr.join(' ');
                     if (item.replace(' ', '').length > 0) {
-                        bot.action(channel, `Starting the ${item} giveaway! Say "!enter" in chat to be eligible! You have 30 seconds!`);
+                        bot.me(channel, `Starting the ${item} giveaway! Say "!enter" in chat to be eligible! You have 30 seconds!`);
                         api.events.giveaway.start((winnerName) => {
                             const reveal = new Monologue();
                             reveal
@@ -437,7 +441,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         /** give away something spooky to chatters */
         case 'treat':
             if (isMod(userstate)) {
-                run(data_channel, bot, speak, true);
+                run(CHANNEL, bot, speak, true);
             }
             break;
 
@@ -452,11 +456,11 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                 if (isMod(userstate)) {
                     const result = api.actions.setCurrencyMultiplier(cdr[0]);
                     if (result) {
-                        bot.action(channel, `updated :: payout = ${20 * result}`);
+                        bot.me(channel, `updated :: payout = ${20 * result}`);
                     }
                 }
             } else {
-                bot.action(channel, `Current multiplier: ${api.actions.getCurrencyMultiplier()}`);
+                bot.me(channel, `Current multiplier: ${api.actions.getCurrencyMultiplier()}`);
             }
             break;
 
@@ -467,7 +471,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                 if ((typeof cdr[0] === 'string') && (cdr[0].length > 0)) {
                     const shoutout = api.messages.shoutout(cdr[0]);
                     if (shoutout !== undefined) {
-                        bot.action(channel, shoutout);
+                        bot.me(channel, shoutout);
                     }
                 }
             }
@@ -484,7 +488,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                     || action === BalanceAction.set
                 ) {
                     const result = api.currency.updateBalance(username, action, parseInt(amount, 10));
-                    bot.action(channel, result);
+                    bot.me(channel, result);
                 }
             }
             break;
@@ -503,7 +507,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
                     || type === 'ffxiv'
                 )) {
                     const result = api.currency.updateWallet(username, action, type, parseInt(amount, 10));
-                    bot.action(channel, result);
+                    bot.me(channel, result);
                 }
             }
             break;
@@ -513,7 +517,7 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
         case '__danger__purge__wallets__': {
             if (userstate.username === 'bebop_bebop' && isMod(userstate)) {
                 const result = api.__danger.__purge__wallets__();
-                bot.action(channel, result);
+                bot.me(channel, result);
             }
             break;
         }
@@ -530,12 +534,16 @@ async function commands(channel: string, userstate: DirtyUser, message: string, 
 
 
 
-bot.on('chat', commands);
+bot.on('PRIVMSG', commands);
 
 bot.on('disconnected', function() {
     process.exit(0);
 });
 
-bot.connect();
+(async function () {
+    await bot.connect();
+    await bot.join('rookuri');
+    bot.say(CHANNEL, 'I\'m alive!!');
+})();
 
 export default bot;

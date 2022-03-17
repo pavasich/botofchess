@@ -26,5 +26,5 @@ import { options } from './globals';
 // }());
 
 
-const client = new TwitchJs.Client(options);
+const client = new TwitchJs.Chat(options);
 export default client;

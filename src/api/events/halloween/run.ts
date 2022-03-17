@@ -29,8 +29,8 @@ export default (channel: string, bot: any, speakingFunction: (m: Monologue) => v
     setState({
         tricking: true,
     });
-    bot.action(channel, 'hears you knocking.');
-    bot.action(channel, `${pick(comments)} (chat within 30s to participate)`);
+    bot.me(channel, 'hears you knocking.');
+    bot.me(channel, `${pick(comments)} (chat within 30s to participate)`);
     setTimeout(() => {
         speakingFunction(trick_or_treat(forceTreat));
         clear();
