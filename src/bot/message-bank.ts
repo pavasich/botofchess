@@ -19,10 +19,11 @@ const message_bank: Record<string, string> = {
     steam: 'steamcommunity.com/id/birdofchess',
     streamgifts: "We're Partnered with StreamGifts, a gifting service that enables Twitch communities to send appreciation gifts to their favorite streamers while protecting personal information on both sides--safer than an Amazon wishlist or even a P.O. box is now. Send a gift through https://stream.gifts/birdofchess",
     trevor: 'The Trevor Project is a leading national organization providing crisis intervention and suicide prevention services to LGBTQIA+ young people under 25. Help save lives by showing your support: https://donate.tiltify.com/@birdofchess/bird-pride-in-september',
-    twitter: 'https://twitter.com/rookuri',
+    twitter: 'https://twitter.com/rookuri_',
     warframe: 'Warframe: [Rookthebird]',
     youtube: 'Rook is on YouTube! https://www.youtube.com/rookuri',
     hyperx: 'Check out the HyperX Quadcast here!: https://bit.ly/QuadcastS',
+    Bloodhunt: 'Bloodhunt is a thrilling free-to-play vampire battle royale. Use your supernatural powers, weapons, and wit to hunt your rivals and dominate the night! Go to www.bloodhunt.com for more information! https://bit.ly/3uM3L1j #ad'
 };
 
 export const synonyms: Record<string, string> = {
