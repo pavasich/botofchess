@@ -23,7 +23,7 @@ const message_bank: Record<string, string> = {
     warframe: 'Warframe: [Rookthebird]',
     youtube: 'Rook is on YouTube! https://www.youtube.com/rookuri',
     hyperx: 'Check out the HyperX Quadcast here!: https://bit.ly/QuadcastS',
-    Bloodhunt: 'Bloodhunt is a thrilling free-to-play vampire battle royale. Use your supernatural powers, weapons, and wit to hunt your rivals and dominate the night! Go to www.bloodhunt.com for more information! https://bit.ly/3uM3L1j #ad'
+    bloodhunt: 'Bloodhunt is a thrilling free-to-play vampire battle royale. Use your supernatural powers, weapons, and wit to hunt your rivals and dominate the night! Go to www.bloodhunt.com for more information! https://bit.ly/3uM3L1j #ad'
 };
 
 export const synonyms: Record<string, string> = {
